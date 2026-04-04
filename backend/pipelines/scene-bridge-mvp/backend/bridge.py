@@ -645,9 +645,9 @@ def compute_scene_objects(
                 u_c, v_c, pose, K, world_transform, points, glb_tree,
             )
 
+            use_anchor_filter = anchor_pos is not None
             if anchor_pos is None:
                 skipped_counts["ray_miss"] += 1
-                continue
 
             # Step 2: Mask-lift to 3D via depth
             world_points = _sample_mask_world_points(
@@ -661,15 +661,41 @@ def compute_scene_objects(
             snapped_indices = _snap_world_points_to_glb(
                 world_points, world_transform, glb_tree,
                 max_distance=max_snap_distance,
-                anchor_glb=anchor_pos,
-                anchor_radius=anchor_radius,
+                anchor_glb=anchor_pos if use_anchor_filter else None,
+                anchor_radius=anchor_radius if use_anchor_filter else None,
             )
+            if len(snapped_indices) < min_points_per_obs and use_anchor_filter:
+                fallback_indices = _snap_world_points_to_glb(
+                    world_points,
+                    world_transform,
+                    glb_tree,
+                    max_distance=max_snap_distance,
+                    anchor_glb=None,
+                    anchor_radius=None,
+                )
+                if len(fallback_indices) > len(snapped_indices):
+                    snapped_indices = fallback_indices
+                    skipped_counts["recovered_without_anchor_filter"] += 1
+            if len(snapped_indices) < min_points_per_obs and not use_anchor_filter:
+                relaxed_snap_distance = max(max_snap_distance * 2.5, 0.05)
+                fallback_indices = _snap_world_points_to_glb(
+                    world_points,
+                    world_transform,
+                    glb_tree,
+                    max_distance=relaxed_snap_distance,
+                    anchor_glb=None,
+                    anchor_radius=None,
+                )
+                if len(fallback_indices) > len(snapped_indices):
+                    snapped_indices = fallback_indices
+                    skipped_counts["recovered_with_relaxed_snap"] += 1
             if len(snapped_indices) < min_points_per_obs:
                 skipped_counts["too_few_snapped_points"] += 1
                 continue
 
             track_point_indices[track_id].update(snapped_indices.tolist())
-            track_anchors[track_id].append(anchor_pos)
+            if anchor_pos is not None:
+                track_anchors[track_id].append(anchor_pos)
             track_labels[track_id].append(str(det.get("canonical_label") or det.get("label") or "unknown"))
             track_scores[track_id].append(float(det.get("score", 0.0)))
             track_observation_count[track_id] += 1
@@ -702,7 +728,8 @@ def compute_scene_objects(
         # Spatial tightening: re-filter all collected points to be near the
         # median ray-cast anchor.  This prevents multi-observation scatter.
         anchors = track_anchors.get(track_id, [])
-        if anchors:
+        anchor_center: np.ndarray | None = None
+        if anchors and len(anchors) >= 2 and observations >= 2:
             anchor_center = np.median(anchors, axis=0)
             anchor_dists = np.linalg.norm(np.array(anchors) - anchor_center, axis=1)
             # Tight radius: median anchor spread + small margin, capped
@@ -713,10 +740,10 @@ def compute_scene_objects(
             tight_radius = min(tight_radius, anchor_radius * 0.8)
             pt_dists = np.linalg.norm(obj_points - anchor_center, axis=1)
             spatial_mask = pt_dists <= tight_radius
-            indices = indices[spatial_mask]
-            obj_points = points[indices]
-            if len(indices) < min_points_per_object:
-                continue
+            tightened_indices = indices[spatial_mask]
+            if len(tightened_indices) >= min_points_per_object:
+                indices = tightened_indices
+                obj_points = points[indices]
 
         component_mask = _largest_voxel_component_mask(obj_points, cluster_voxel_size)
         indices = indices[component_mask]
@@ -743,7 +770,7 @@ def compute_scene_objects(
             or np.mean(track_scores[track_id])
         )
 
-        if anchors:
+        if anchor_center is not None:
             centroid = anchor_center.copy()
         else:
             centroid = obj_points.mean(axis=0)
