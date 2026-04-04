@@ -1,55 +1,65 @@
+"use client"
+
 import Link from "next/link"
-import { RetroGrid } from "@/components/ui/retro-grid"
-import { ShimmerButton } from "@/components/ui/shimmer-button"
+import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern"
+import { TextAnimate } from "@/components/ui/text-animate"
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button"
 import { BlurFade } from "@/components/ui/blur-fade"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 
 export function FinalCTA() {
   return (
-    <section className="relative overflow-hidden py-32">
-      <RetroGrid
-        className="absolute inset-0 opacity-30"
-        angle={65}
-        cellSize={60}
-        lightLineColor="oklch(0.735 0.152 71)"
-        darkLineColor="oklch(0.735 0.152 71)"
+    <section className="relative overflow-hidden py-40">
+      <AnimatedGridPattern
+        className="absolute inset-0 opacity-20 [mask-image:radial-gradient(ellipse_at_center,white_30%,transparent_70%)]"
+        width={60}
+        height={60}
+        strokeDasharray={4}
+        numSquares={30}
+        maxOpacity={0.25}
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background" />
 
       <div className="relative z-10 mx-auto max-w-3xl px-6 text-center">
         <BlurFade delay={0.1}>
           <p className="font-mono text-sm uppercase tracking-widest text-mango">
             Built for the 253 million.
           </p>
-          <h2 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">
-            The world, described.
-          </h2>
-          <p className="mt-5 text-lg text-muted-foreground">
-            wayfr gives anyone with visual impairment the ability to navigate independently —
-            with AI that sees, understands, and speaks.
-          </p>
         </BlurFade>
 
         <BlurFade delay={0.2}>
-          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+          <TextAnimate
+            as="h2"
+            className="mt-6 text-4xl font-bold tracking-tight sm:text-6xl"
+            animation="blurInUp"
+            by="word"
+          >
+            The world, described.
+          </TextAnimate>
+        </BlurFade>
+
+        <BlurFade delay={0.3}>
+          <p className="mx-auto mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">
+            wayfr gives anyone with visual impairment the ability to
+            navigate independently — with AI that sees, understands, and speaks.
+          </p>
+        </BlurFade>
+
+        <BlurFade delay={0.4}>
+          <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link href="/verify">
-              <ShimmerButton
-                shimmerColor="#F5A623"
-                background="oklch(0.735 0.152 71)"
-                className="px-8 py-3 text-sm font-semibold text-background"
-              >
+              <InteractiveHoverButton className="bg-mango text-background border-mango/50 font-semibold px-8">
                 Report an obstacle
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </ShimmerButton>
+              </InteractiveHoverButton>
             </Link>
             <Link href="/dashboard">
               <Button
                 variant="outline"
                 size="lg"
-                className="border-mango/30 hover:border-mango/60 hover:bg-mango-subtle"
+                className="rounded-full border-border/60 hover:border-mango/40 hover:bg-mango/5 px-8"
               >
                 Caregiver dashboard
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </div>

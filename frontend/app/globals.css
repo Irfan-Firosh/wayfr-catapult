@@ -7,7 +7,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-outfit);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -86,7 +86,21 @@
   @keyframes border-beam {
     100% { offset-distance: 100%; }
   }
-}
+  --animate-shiny-text: shiny-text 8s infinite;
+  --animate-shine: shine var(--duration) infinite linear
+;
+  @keyframes shiny-text {
+  0%, 90%, 100% {
+    background-position: calc(-100% - var(--shiny-width)) 0;}
+  30%, 60% {
+    background-position: calc(100% + var(--shiny-width)) 0;}}
+  @keyframes shine {
+  0% {
+    background-position: 0% 0%;}
+  50% {
+    background-position: 100% 100%;}
+  to {
+    background-position: 0% 0%;}}}
 
 /* ─── MANGO PALETTE ─────────────────────────────────────── */
 :root {
@@ -171,6 +185,14 @@
   }
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-feature-settings: "ss01" 1, "rlig" 1, "calt" 1;
+  }
+  ::selection {
+    background-color: oklch(0.735 0.152 71 / 25%);
+    color: inherit;
   }
 }
 
@@ -184,4 +206,103 @@
   .border-mango      { border-color: oklch(0.735 0.152 71 / 30%); }
   .ring-mango        { --tw-ring-color: var(--mango-500); }
   .glow-mango        { box-shadow: 0 0 40px oklch(0.735 0.152 71 / 20%); }
+  .glass              { background: oklch(from var(--card) l c h / 60%); backdrop-filter: blur(24px); border: 1px solid oklch(from var(--border) l c h / 50%); }
+  .glass-mango        { background: oklch(0.735 0.152 71 / 5%); backdrop-filter: blur(24px); border: 1px solid oklch(0.735 0.152 71 / 15%); }
+}
+
+/* ─── HERO FUTURISTIC ANIMATIONS ────────────────────────── */
+.hero-fade-in {
+  animation: heroFadeIn 0.7s cubic-bezier(0.23, 1.02, 0.32, 1) forwards;
+  opacity: 0;
+}
+.fade-in {
+  animation: heroFadeIn 0.7s cubic-bezier(0.23, 1.02, 0.32, 1) forwards;
+  opacity: 0;
+}
+.hero-fade-in-subtitle {
+  animation: heroFadeInSubtitle 1s cubic-bezier(0.23, 1.02, 0.32, 1) forwards;
+  opacity: 0;
+}
+.fade-in-subtitle {
+  animation: heroFadeInSubtitle 1s cubic-bezier(0.23, 1.02, 0.32, 1) forwards;
+  opacity: 0;
+}
+@keyframes heroFadeIn {
+  0% { opacity: 0; transform: translateY(40px) skewY(4deg); filter: blur(8px); }
+  60% { opacity: 1; filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) skewY(0); filter: blur(0); }
+}
+@keyframes heroFadeInSubtitle {
+  0% { opacity: 0; transform: translateY(20px); filter: blur(4px); }
+  100% { opacity: 0.8; transform: translateY(0); filter: blur(0); }
+}
+.hero-explore-btn {
+  position: absolute;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  z-index: 70;
+  background: transparent;
+  border: 1.5px solid oklch(0.735 0.152 71 / 40%);
+  color: #fff;
+  padding: 12px 32px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: border-color 0.3s, background 0.3s;
+  animation: heroFadeIn 0.7s cubic-bezier(0.23, 1.02, 0.32, 1) forwards;
+  opacity: 0;
+}
+.explore-btn {
+  position: absolute;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  z-index: 70;
+  background: transparent;
+  border: 1.5px solid oklch(0.735 0.152 71 / 40%);
+  color: #fff;
+  padding: 12px 32px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: border-color 0.3s, background 0.3s;
+  animation: heroFadeIn 0.7s cubic-bezier(0.23, 1.02, 0.32, 1) forwards;
+  opacity: 0;
+}
+.hero-explore-btn:hover {
+  border-color: var(--mango-500);
+  background: oklch(0.735 0.152 71 / 10%);
+}
+.explore-btn:hover {
+  border-color: var(--mango-500);
+  background: oklch(0.735 0.152 71 / 10%);
+}
+.hero-explore-arrow {
+  display: flex;
+  align-items: center;
+}
+.explore-arrow {
+  display: flex;
+  align-items: center;
+}
+.hero-arrow-svg {
+  animation: heroBounce 1.5s ease-in-out infinite;
+}
+.arrow-svg {
+  animation: heroBounce 1.5s ease-in-out infinite;
+}
+@keyframes heroBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
 }

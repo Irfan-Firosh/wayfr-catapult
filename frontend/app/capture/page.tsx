@@ -185,13 +185,13 @@ export default function CapturePage() {
         </div>
 
         {/* Session bar */}
-        <div className="mb-4 rounded-xl border border-mango/20 bg-card p-4">
+        <div className="mb-4 rounded-2xl border border-mango/15 bg-card/60 backdrop-blur-xl p-4">
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">Session</p>
               <p className="text-lg font-bold font-mono text-mango tracking-widest">{sessionId}</p>
             </div>
-            <Button size="sm" variant="outline" onClick={copyLink} className="text-xs border-mango/30 hover:border-mango/60 font-mono">
+            <Button size="sm" variant="outline" onClick={copyLink} className="text-xs border-mango/20 hover:border-mango/40 font-mono rounded-full">
               {copied ? "Copied!" : "Copy dashboard link"}
             </Button>
           </div>
@@ -199,8 +199,8 @@ export default function CapturePage() {
 
         {/* ── Input section ─────────────────────────────────────────────────── */}
         {mode !== "done" && (
-          <div className="rounded-xl border border-border bg-card overflow-hidden mb-4">
-            <div className="border-b border-border px-4 py-2.5 flex items-center justify-between">
+          <div className="rounded-2xl border border-border/40 bg-card/60 backdrop-blur-xl overflow-hidden mb-4">
+            <div className="border-b border-border/40 px-4 py-2.5 flex items-center justify-between">
               <span className="text-xs font-mono text-muted-foreground uppercase tracking-widest">
                 {mode === "recording" ? "Recording..." : mode === "scanning" ? "Processing..." : "Input"}
               </span>
@@ -296,8 +296,8 @@ export default function CapturePage() {
             </div>
 
             {/* 3D Viewer */}
-            <div className="rounded-xl border border-mango/15 bg-card overflow-hidden mb-4">
-              <div className="border-b border-border px-4 py-2.5 flex items-center justify-between">
+            <div className="rounded-2xl border border-mango/15 bg-card/60 backdrop-blur-xl overflow-hidden mb-4">
+              <div className="border-b border-border/40 px-4 py-2.5 flex items-center justify-between">
                 <span className="text-xs font-mono text-muted-foreground uppercase tracking-widest">3D SPATIAL MAP — environment reconstruction</span>
                 <Badge variant="outline" className="text-[10px] font-mono border-mango/30 text-mango">
                   {scene.length} objects
@@ -311,8 +311,8 @@ export default function CapturePage() {
             {/* Annotations list */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Detection list */}
-              <div className="rounded-xl border border-border bg-card overflow-hidden">
-                <div className="border-b border-border px-4 py-2.5">
+              <div className="rounded-2xl border border-border/40 bg-card/60 backdrop-blur-xl overflow-hidden">
+                <div className="border-b border-border/40 px-4 py-2.5">
                   <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Detected objects</span>
                 </div>
                 <div className="max-h-72 overflow-y-auto">
@@ -361,7 +361,7 @@ export default function CapturePage() {
               </div>
 
               {/* Selected object detail */}
-              <div className="rounded-xl border border-border bg-card p-4">
+              <div className="rounded-2xl border border-border/40 bg-card/60 backdrop-blur-xl p-4">
                 <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-3">
                   {selectedObj !== null ? "Object detail" : "Scene summary"}
                 </p>
@@ -421,7 +421,7 @@ export default function CapturePage() {
 
         {/* Instructions */}
         {mode === "idle" && (
-          <div className="mt-4 rounded-xl border border-border bg-card p-4">
+          <div className="mt-4 rounded-2xl border border-border/40 bg-card/60 backdrop-blur-xl p-4">
             <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-2">How it works</p>
             <ol className="space-y-1.5 text-xs text-muted-foreground font-mono">
               <li>1. Record from camera or upload a video file</li>

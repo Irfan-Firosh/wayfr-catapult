@@ -39,7 +39,7 @@ export default function VerifyPage() {
         <div className="relative z-10 mx-auto w-full max-w-md">
           {!verified ? (
             <BlurFade delay={0.1}>
-              <div className="rounded-2xl border border-mango/20 bg-card p-8 shadow-xl">
+              <div className="rounded-2xl border border-mango/15 bg-card/60 backdrop-blur-xl p-8 shadow-xl">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-mango-subtle border border-mango/30">
                   <ShieldCheck className="h-6 w-6 text-mango" />
                 </div>
@@ -50,7 +50,7 @@ export default function VerifyPage() {
                   unique person. Blind users depend on this data for their safety.
                 </p>
 
-                <div className="mt-6 rounded-lg border border-border bg-background/50 p-4 text-sm text-muted-foreground">
+                <div className="mt-6 rounded-xl border border-border/40 bg-background/30 backdrop-blur p-4 text-sm text-muted-foreground">
                   <p className="font-medium text-foreground">What World ID does:</p>
                   <ul className="mt-2 space-y-1">
                     <li>✓ Proves you&apos;re a unique human via iris scan</li>
@@ -91,7 +91,7 @@ export default function VerifyPage() {
             </BlurFade>
           ) : (
             <BlurFade delay={0.1}>
-              <div className="rounded-2xl border border-green-500/30 bg-green-500/10 p-8 text-center shadow-xl">
+              <div className="rounded-2xl border border-green-500/20 bg-green-500/5 backdrop-blur-xl p-8 text-center shadow-xl">
                 <div className="flex h-14 w-14 mx-auto items-center justify-center rounded-full border border-green-500/40 bg-green-500/20 text-2xl">
                   ✓
                 </div>

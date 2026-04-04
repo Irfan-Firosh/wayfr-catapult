@@ -1,241 +1,180 @@
 "use client"
 
-import { BentoGrid, BentoCard } from "@/components/ui/bento-grid"
-import { Globe } from "@/components/ui/globe"
-import { DotPattern } from "@/components/ui/dot-pattern"
+import { MagicCard } from "@/components/ui/magic-card"
 import { Marquee } from "@/components/ui/marquee"
 import { BorderBeam } from "@/components/ui/border-beam"
-import { Particles } from "@/components/ui/particles"
+import { Globe } from "@/components/ui/globe"
 import { BlurFade } from "@/components/ui/blur-fade"
-import { Badge } from "@/components/ui/badge"
+import { TextAnimate } from "@/components/ui/text-animate"
 import { useTheme } from "next-themes"
+import { Eye, Map, Type, Shield, Users } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const ocrSamples = [
-  "EXIT →", "PULL TO OPEN", "WET FLOOR", "PLATFORM 3",
+  "EXIT \u2192", "PULL TO OPEN", "WET FLOOR", "PLATFORM 3",
   "CAUTION: STEP", "PUSH", "ACCESSIBLE ROUTE", "MIND THE GAP",
-  "CROSSWALK SIGNAL", "ELEVATOR", "RESTROOMS →", "EMERGENCY EXIT",
+  "CROSSWALK SIGNAL", "ELEVATOR", "RESTROOMS \u2192", "EMERGENCY EXIT",
 ]
 
-function ObstacleCard() {
-  return (
-    <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-xl p-6">
-      <DotPattern
-        className="absolute inset-0 opacity-30 [mask-image:radial-gradient(ellipse_at_center,white,transparent_70%)]"
-        cx={1}
-        cy={1}
-        cr={1}
-      />
-      <div className="relative z-10">
-        <Badge variant="outline" className="border-mango/30 text-mango text-xs">
-          Live detection
-        </Badge>
-        <h3 className="mt-3 text-xl font-bold">Obstacle Detection</h3>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Custom VLM trained on Purdue RCAC GPUs identifies curbs, steps, poles, and construction zones in real time.
-        </p>
-      </div>
-      <div className="relative z-10 mt-6 space-y-2">
-        {[
-          { label: "Curb drop", dist: "3 ft ahead", urgency: "high" },
-          { label: "Pole", dist: "5 ft right", urgency: "medium" },
-          { label: "Clear path", dist: "left", urgency: "low" },
-        ].map((item) => (
-          <div key={item.label} className="flex items-center justify-between rounded-lg border border-border bg-background/60 px-3 py-2 text-xs backdrop-blur">
-            <span className="font-medium">{item.label}</span>
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">{item.dist}</span>
-              <span className={cn(
-                "h-2 w-2 rounded-full",
-                item.urgency === "high" ? "bg-destructive" : item.urgency === "medium" ? "bg-mango" : "bg-green-500"
-              )} />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
+interface FeatureCardProps {
+  icon: React.ReactNode
+  title: string
+  description: string
+  children?: React.ReactNode
+  className?: string
 }
 
-function HazardMapCard() {
-  return (
-    <div className="relative flex h-full flex-col items-center justify-between overflow-hidden rounded-xl p-6">
-      <div className="relative z-10 self-start">
-        <Badge variant="outline" className="border-mango/30 text-mango text-xs">
-          Community verified
-        </Badge>
-        <h3 className="mt-3 text-xl font-bold">Hazard Map</h3>
-        <p className="mt-2 text-sm text-muted-foreground">
-          World ID-verified reports from real humans. Zero fake hazards.
-        </p>
-      </div>
-      <div className="relative -mb-6 h-52 w-full">
-        <Globe className="absolute inset-0" />
-      </div>
-    </div>
-  )
-}
-
-function OCRCard() {
-  return (
-    <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-xl p-6">
-      <div className="relative z-10">
-        <Badge variant="outline" className="border-mango/30 text-mango text-xs">
-          Real-time OCR
-        </Badge>
-        <h3 className="mt-3 text-xl font-bold">Text Reading</h3>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Signs, menus, labels — read aloud instantly via Google Cloud Vision.
-        </p>
-      </div>
-      <div className="relative z-10 mt-4 space-y-2 overflow-hidden">
-        <Marquee className="text-xs [--duration:20s]" pauseOnHover>
-          {ocrSamples.map((s) => (
-            <span key={s} className="mx-3 rounded-md border border-mango/20 bg-mango-subtle px-2 py-1 font-mono text-mango">
-              {s}
-            </span>
-          ))}
-        </Marquee>
-        <Marquee className="text-xs [--duration:15s]" reverse pauseOnHover>
-          {ocrSamples.slice().reverse().map((s) => (
-            <span key={s} className="mx-3 rounded-md border border-mango/20 bg-mango-subtle px-2 py-1 font-mono text-mango">
-              {s}
-            </span>
-          ))}
-        </Marquee>
-      </div>
-    </div>
-  )
-}
-
-function WorldIDCard() {
+function FeatureCard({ icon, title, description, children, className }: FeatureCardProps) {
   const { theme } = useTheme()
   return (
-    <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-xl p-6">
-      <Particles
-        className="absolute inset-0"
-        quantity={30}
-        color="#F5A623"
-        ease={80}
-        staticity={40}
-      />
-      <div className="relative z-10">
-        <Badge variant="outline" className="border-mango/30 text-mango text-xs">
-          Zero fake reports
-        </Badge>
-        <h3 className="mt-3 text-xl font-bold">World ID Trust</h3>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Every hazard report is verified by World ID — a ZK proof that you&apos;re a unique human. No bots, ever.
-        </p>
+    <MagicCard
+      className={cn("relative flex flex-col rounded-2xl p-6 border-border/20", className)}
+      gradientColor={theme === "dark" ? "oklch(0.735 0.152 71 / 6%)" : "oklch(0.735 0.152 71 / 10%)"}
+      gradientOpacity={0.12}
+    >
+      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-mango/10 text-mango">
+        {icon}
       </div>
-      <div className="relative z-10 mt-4 rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3">
-        <div className="flex items-center gap-2">
-          <span className="text-green-500">✓</span>
-          <span className="text-sm font-medium">Verified Human</span>
-          <span className="ml-auto font-mono text-xs text-muted-foreground">0x7f3c...a8d2</span>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function CaregiverCard() {
-  return (
-    <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-xl border border-mango/20 p-6">
-      <BorderBeam size={80} duration={6} colorFrom="#F5A623" colorTo="#FDDDA0" />
-      <div className="relative z-10">
-        <Badge variant="outline" className="border-mango/30 text-mango text-xs">
-          Live monitoring
-        </Badge>
-        <h3 className="mt-3 text-xl font-bold">Caregiver Dashboard</h3>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Real-time location, detection feed, and hazard alerts for anyone you care about.
-        </p>
-      </div>
-      <div className="relative z-10 mt-4 space-y-2">
-        <div className="flex items-center gap-3 rounded-lg border border-border bg-background/60 px-3 py-2 backdrop-blur">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-mango opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-mango" />
-          </span>
-          <span className="text-sm font-medium">Alex — Active</span>
-          <span className="ml-auto text-xs text-muted-foreground">2.1 mph</span>
-        </div>
-        <p className="px-1 text-xs text-muted-foreground">
-          10:32:07 · &quot;Curb drop 3ft ahead&quot;
-        </p>
-        <p className="px-1 text-xs text-muted-foreground">
-          10:32:04 · Sign read: &quot;PULL TO OPEN&quot;
-        </p>
-      </div>
-    </div>
+      <h3 className="text-lg font-semibold">{title}</h3>
+      <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{description}</p>
+      {children && <div className="mt-4 flex-1">{children}</div>}
+    </MagicCard>
   )
 }
 
 export function Features() {
   return (
-    <section className="py-24">
+    <section className="py-28">
       <div className="mx-auto max-w-6xl px-6">
         <BlurFade delay={0.1}>
           <div className="mb-16 text-center">
             <p className="text-sm font-medium uppercase tracking-widest text-mango">
               Features
             </p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+            <TextAnimate
+              as="h2"
+              className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl"
+              animation="blurInUp"
+              by="word"
+            >
               Everything a guide should be.
-            </h2>
+            </TextAnimate>
           </div>
         </BlurFade>
 
-        <BlurFade delay={0.2}>
-          <BentoGrid>
-            <BentoCard
-              name="Obstacle Detection"
-              className="col-span-1 md:col-span-2 row-span-2"
-              background={<ObstacleCard />}
-              Icon={() => null}
-              description=""
-              href="/dashboard"
-              cta="View dashboard"
-            />
-            <BentoCard
-              name="Hazard Map"
-              className="col-span-1 row-span-2"
-              background={<HazardMapCard />}
-              Icon={() => null}
-              description=""
-              href="/map"
-              cta="Explore map"
-            />
-            <BentoCard
-              name="Text Reading"
-              className="col-span-1 md:col-span-2"
-              background={<OCRCard />}
-              Icon={() => null}
-              description=""
-              href="/#how-it-works"
-              cta="Learn more"
-            />
-            <BentoCard
-              name="World ID Trust"
-              className="col-span-1"
-              background={<WorldIDCard />}
-              Icon={() => null}
-              description=""
-              href="/verify"
-              cta="Verify now"
-            />
-            <BentoCard
-              name="Caregiver Dashboard"
-              className="col-span-1 md:col-span-2"
-              background={<CaregiverCard />}
-              Icon={() => null}
-              description=""
-              href="/dashboard"
-              cta="Open dashboard"
-            />
-          </BentoGrid>
-        </BlurFade>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {/* Row 1 — 3 cards */}
+          <BlurFade delay={0.15} className="md:col-span-2">
+            <FeatureCard
+              icon={<Eye className="h-5 w-5" />}
+              title="Obstacle Detection"
+              description="Custom VLM on Purdue RCAC GPUs detects curbs, steps, poles, and construction zones in real time."
+              className="h-full"
+            >
+              <div className="space-y-2">
+                {[
+                  { label: "Curb drop", dist: "3 ft ahead", urgency: "high" as const },
+                  { label: "Pole", dist: "5 ft right", urgency: "medium" as const },
+                  { label: "Clear path", dist: "left", urgency: "low" as const },
+                ].map((item) => (
+                  <div key={item.label} className="flex items-center justify-between rounded-xl border border-border/40 bg-background/40 px-3 py-2 text-xs backdrop-blur">
+                    <span className="font-medium">{item.label}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground">{item.dist}</span>
+                      <span className={cn(
+                        "h-2 w-2 rounded-full",
+                        item.urgency === "high" ? "bg-destructive" : item.urgency === "medium" ? "bg-mango" : "bg-green-500"
+                      )} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </FeatureCard>
+          </BlurFade>
+
+          <BlurFade delay={0.2}>
+            <FeatureCard
+              icon={<Map className="h-5 w-5" />}
+              title="Hazard Map"
+              description="World ID-verified reports from real humans. Zero fake hazards."
+              className="h-full"
+            >
+              <div className="relative -mx-2 -mb-2 h-40 overflow-hidden rounded-xl">
+                <Globe className="absolute inset-0 scale-110" />
+              </div>
+            </FeatureCard>
+          </BlurFade>
+
+          {/* Row 2 — 3 cards */}
+          <BlurFade delay={0.25}>
+            <FeatureCard
+              icon={<Shield className="h-5 w-5" />}
+              title="World ID Trust"
+              description="Every report verified by ZK proof. No bots."
+              className="h-full"
+            >
+              <div className="rounded-xl border border-green-500/20 bg-green-500/5 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-green-500">&check;</span>
+                  <span className="text-sm font-medium">Verified Human</span>
+                  <span className="ml-auto font-mono text-[10px] text-muted-foreground">0x7f3c...a8d2</span>
+                </div>
+              </div>
+            </FeatureCard>
+          </BlurFade>
+
+          <BlurFade delay={0.3}>
+            <FeatureCard
+              icon={<Type className="h-5 w-5" />}
+              title="Text Reading"
+              description="Signs, menus, labels — read aloud instantly."
+              className="h-full"
+            >
+              <div className="space-y-2 overflow-hidden rounded-xl">
+                <Marquee className="text-xs [--duration:20s]" pauseOnHover>
+                  {ocrSamples.map((s) => (
+                    <span key={s} className="mx-2 rounded-lg border border-mango/15 bg-mango/5 px-2 py-1 font-mono text-mango text-[10px]">
+                      {s}
+                    </span>
+                  ))}
+                </Marquee>
+                <Marquee className="text-xs [--duration:16s]" reverse pauseOnHover>
+                  {ocrSamples.slice().reverse().map((s) => (
+                    <span key={s} className="mx-2 rounded-lg border border-mango/15 bg-mango/5 px-2 py-1 font-mono text-mango text-[10px]">
+                      {s}
+                    </span>
+                  ))}
+                </Marquee>
+              </div>
+            </FeatureCard>
+          </BlurFade>
+
+          <BlurFade delay={0.35}>
+            <div className="relative h-full overflow-hidden rounded-2xl">
+              <FeatureCard
+                icon={<Users className="h-5 w-5" />}
+                title="Caregiver Dashboard"
+                description="Real-time location, detection feed, and alerts for anyone you care about."
+                className="h-full"
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 rounded-xl border border-border/40 bg-background/40 px-3 py-2 backdrop-blur">
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-mango opacity-75" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-mango" />
+                    </span>
+                    <span className="text-sm font-medium">Alex — Active</span>
+                    <span className="ml-auto text-xs text-muted-foreground">2.1 mph</span>
+                  </div>
+                  <p className="px-1 text-[10px] font-mono text-muted-foreground">
+                    10:32 · &quot;Curb drop 3ft ahead&quot;
+                  </p>
+                </div>
+              </FeatureCard>
+              <BorderBeam size={80} duration={6} colorFrom="#F5A623" colorTo="#FDDDA0" />
+            </div>
+          </BlurFade>
+        </div>
       </div>
     </section>
   )

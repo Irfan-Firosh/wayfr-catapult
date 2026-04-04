@@ -57,7 +57,7 @@ export default function ReportPage() {
           <BlurFade delay={0.2}>
             <form onSubmit={handleSubmit} className="mt-8 space-y-5">
               {/* Location */}
-              <div className="rounded-xl border border-mango/10 bg-card p-4">
+              <div className="rounded-2xl border border-mango/10 bg-card/60 backdrop-blur-xl p-4">
                 <div className="flex items-center gap-2 text-sm font-medium">
                   <MapPin className="h-4 w-4 text-mango" />
                   GPS location
@@ -157,7 +157,7 @@ export default function ReportPage() {
           </BlurFade>
         ) : (
           <BlurFade delay={0.1}>
-            <div className="mt-8 rounded-2xl border border-green-500/30 bg-green-500/10 p-8 text-center">
+            <div className="mt-8 rounded-2xl border border-green-500/20 bg-green-500/5 backdrop-blur-xl p-8 text-center">
               <CheckCircle2 className="mx-auto h-10 w-10 text-green-400" />
               <h2 className="mt-4 text-xl font-bold text-green-400">Obstacle reported</h2>
               <p className="mt-2 text-sm text-muted-foreground">

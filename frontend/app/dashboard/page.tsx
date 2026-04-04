@@ -237,7 +237,7 @@ export default function DashboardPage() {
 
         {/* Session link bar */}
         {sessionId && (
-          <div className="mb-4 flex items-center gap-3 rounded-lg border border-mango/15 bg-card px-4 py-2.5">
+          <div className="mb-4 flex items-center gap-3 rounded-2xl border border-mango/15 bg-card/60 backdrop-blur-xl px-4 py-2.5">
             <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground shrink-0">Session</span>
             <span className="font-mono text-sm font-bold text-mango tracking-widest shrink-0">{sessionId}</span>
             <span className="text-[10px] font-mono text-muted-foreground flex-1 truncate hidden sm:block">{captureUrl}</span>
@@ -253,8 +253,8 @@ export default function DashboardPage() {
         )}
 
         {/* 3D viewer */}
-        <div className="rounded-xl border border-mango/15 bg-card overflow-hidden">
-          <div className="border-b border-border px-4 py-2.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-mango/15 bg-card/60 backdrop-blur-xl overflow-hidden">
+          <div className="border-b border-border/40 px-4 py-2.5 flex items-center justify-between">
             <span className="text-xs font-mono text-muted-foreground">3D SPATIAL MAP — environment reconstruction</span>
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="text-[10px] font-mono border-mango/30 text-mango">
@@ -275,7 +275,7 @@ export default function DashboardPage() {
         {/* Bottom row */}
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           {/* Narration */}
-          <div className="rounded-xl border border-border bg-card p-4">
+          <div className="rounded-2xl border border-border/40 bg-card/60 backdrop-blur-xl p-4">
             <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-2">Current narration</p>
             <p className="text-sm font-medium leading-relaxed text-foreground min-h-[2.5rem]">
               {narration ? `\u201C${narration}\u201D` : <span className="text-muted-foreground italic">Waiting for live audio\u2026</span>}
@@ -318,8 +318,8 @@ export default function DashboardPage() {
           </div>
 
           {/* Detection log */}
-          <div className="rounded-xl border border-border bg-card overflow-hidden">
-            <div className="border-b border-border px-4 py-2.5">
+          <div className="rounded-2xl border border-border/40 bg-card/60 backdrop-blur-xl overflow-hidden">
+            <div className="border-b border-border/40 px-4 py-2.5">
               <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Detection log</span>
             </div>
             <div className="h-52 overflow-y-auto">

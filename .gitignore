@@ -40,3 +40,17 @@ uploads/
 # Downloaded model weights (e.g. YOLO)
 *.pt
 *.pth
+
+# Playwright MCP
+.playwright-mcp/
+
+# Screenshots and images
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+
+# Test video inputs
+test/inputs/
+backend/test/inputs/

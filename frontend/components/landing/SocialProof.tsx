@@ -1,5 +1,6 @@
+"use client"
+
 import { Marquee } from "@/components/ui/marquee"
-import { BlurFade } from "@/components/ui/blur-fade"
 
 const items = [
   "4 AI models in parallel",
@@ -16,31 +17,20 @@ const items = [
 
 export function SocialProof() {
   return (
-    <section className="relative overflow-hidden border-y border-mango/10 bg-card py-10">
-      <BlurFade delay={0.1}>
-        <Marquee className="[--duration:30s]" pauseOnHover>
-          {items.map((item) => (
-            <span
-              key={item}
-              className="mx-6 flex items-center gap-2 text-sm text-muted-foreground"
-            >
-              <span className="h-1 w-1 rounded-full bg-mango" />
-              {item}
-            </span>
-          ))}
-        </Marquee>
-        <Marquee className="mt-3 [--duration:25s]" reverse pauseOnHover>
-          {items.slice().reverse().map((item) => (
-            <span
-              key={item}
-              className="mx-6 flex items-center gap-2 text-sm text-muted-foreground"
-            >
-              <span className="h-1 w-1 rounded-full bg-mango/50" />
-              {item}
-            </span>
-          ))}
-        </Marquee>
-      </BlurFade>
+    <section className="relative overflow-hidden border-y border-border/30 py-8">
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-background to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-background to-transparent" />
+      <Marquee className="[--duration:35s]" pauseOnHover>
+        {items.map((item) => (
+          <span
+            key={item}
+            className="mx-6 flex items-center gap-2 text-sm text-muted-foreground"
+          >
+            <span className="h-1 w-1 rounded-full bg-mango" />
+            {item}
+          </span>
+        ))}
+      </Marquee>
     </section>
   )
 }
