@@ -41,9 +41,9 @@ export function AppSidebar() {
       <SidebarHeader className="gap-3 p-3">
         <div className={cn("flex items-center gap-3", isCollapsed ? "justify-center" : "justify-between")}>
           <Link
-            href="/dashboard"
+            href="/"
             className={cn("flex min-w-0 items-center gap-3", isCollapsed && "justify-center")}
-            title="wayfr"
+            title="Home"
           >
             <div className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground">
               <span className="text-sm font-semibold">w</span>

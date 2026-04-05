@@ -533,6 +533,7 @@ function AnnotatorSelectionLayer({
   onObjectHover,
   debugOptions,
   exactHighlight,
+  exactSelectionHighlight,
   displayMode,
   colorMode,
   labelMap,
@@ -545,6 +546,7 @@ function AnnotatorSelectionLayer({
   onObjectHover?: (objectId: string | null) => void
   debugOptions: SceneDebugOptions
   exactHighlight: ExactObjectHighlight | null
+  exactSelectionHighlight: boolean
   displayMode: SceneDisplayMode
   colorMode: SceneColorMode
   labelMap?: Record<string, string>
@@ -556,6 +558,10 @@ function AnnotatorSelectionLayer({
     hoveredObjectId && hoveredObjectId !== focusedObjectId ? objectById.get(hoveredObjectId) ?? null : null
   const focusedMeta = useMemo(() => (focusedObject ? getObjectFocusMeta(focusedObject) : null), [focusedObject])
   const hoveredMeta = useMemo(() => (hoveredObject ? getObjectFocusMeta(hoveredObject) : null), [hoveredObject])
+  const shouldRenderExactHighlight =
+    (debugOptions.showExactPoints || exactSelectionHighlight) &&
+    !!exactHighlight &&
+    exactHighlight.sampledPoints.length > 0
 
   return (
     <>
@@ -658,8 +664,12 @@ function AnnotatorSelectionLayer({
             ))
         : null}
 
-      {debugOptions.showExactPoints && exactHighlight && exactHighlight.sampledPoints.length > 0 ? (
-        <ObjectPointHighlight points={exactHighlight.sampledPoints} />
+      {shouldRenderExactHighlight && exactHighlight ? (
+        <ObjectPointHighlight
+          points={exactHighlight.sampledPoints}
+          pointSize={exactSelectionHighlight ? 0.042 : 0.032}
+          opacity={exactSelectionHighlight ? 1 : 0.9}
+        />
       ) : null}
     </>
   )
@@ -682,6 +692,7 @@ function SceneContent({
   onObjectHover,
   debugOptions,
   exactHighlight,
+  exactSelectionHighlight,
   onPointCount,
   onGlbError,
   labelMap,
@@ -703,6 +714,7 @@ function SceneContent({
   onObjectHover?: (objectId: string | null) => void
   debugOptions: SceneDebugOptions
   exactHighlight: ExactObjectHighlight | null
+  exactSelectionHighlight: boolean
   onPointCount: (n: number) => void
   onGlbError: () => void
   labelMap?: Record<string, string>
@@ -712,10 +724,11 @@ function SceneContent({
   const targetLower = targetLabel?.toLowerCase()
   const objectById = useMemo(() => new Map(objects.map((object) => [object.id, object])), [objects])
   const focusedObject = focusedObjectId ? objectById.get(focusedObjectId) ?? null : null
+  const hasExactSelectionHighlight = exactSelectionHighlight && !!exactHighlight && exactHighlight.sampledPoints.length > 0
   const shaderSelectionRegion = useMemo(() => {
-    if (mode !== "annotator" || !focusedObject) return null
+    if (mode !== "annotator" || !focusedObject || hasExactSelectionHighlight) return null
     return toFocusRegion(getObjectFocusMeta(focusedObject))
-  }, [focusedObject, mode])
+  }, [focusedObject, hasExactSelectionHighlight, mode])
   const shaderHoverRegion = useMemo(() => {
     if (mode !== "annotator" || !hoveredObjectId || hoveredObjectId === focusedObjectId) return null
     const object = objectById.get(hoveredObjectId)
@@ -759,6 +772,7 @@ function SceneContent({
           onObjectHover={onObjectHover}
           debugOptions={debugOptions}
           exactHighlight={exactHighlight}
+          exactSelectionHighlight={exactSelectionHighlight}
           displayMode={displayMode}
           colorMode={colorMode}
           labelMap={labelMap}
@@ -814,6 +828,7 @@ interface HomeSceneInnerProps {
   onObjectHover?: (objectId: string | null) => void
   debugOptions: SceneDebugOptions
   exactHighlight: ExactObjectHighlight | null
+  exactSelectionHighlight?: boolean
   onPointCount: (n: number) => void
   onGlbError: () => void
   labelMap?: Record<string, string>
@@ -837,6 +852,7 @@ export function HomeSceneInner({
   onObjectHover,
   debugOptions,
   exactHighlight,
+  exactSelectionHighlight = false,
   onPointCount,
   onGlbError,
   labelMap,
@@ -871,6 +887,7 @@ export function HomeSceneInner({
             onObjectHover={onObjectHover}
             debugOptions={debugOptions}
             exactHighlight={exactHighlight}
+            exactSelectionHighlight={exactSelectionHighlight}
             onPointCount={onPointCount}
             onGlbError={onGlbError}
             labelMap={labelMap}

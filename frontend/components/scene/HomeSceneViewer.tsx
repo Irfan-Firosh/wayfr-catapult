@@ -78,10 +78,7 @@ export interface HomeSceneViewerProps {
   debugOptions?: Partial<SceneDebugOptions>
   onVertexCountChange?: (count: number) => void
   showSceneBadge?: boolean
-  /** Maps objectId → display label override (e.g. persona label instead of raw object label) */
-  labelMap?: Record<string, string>
-  /** Ambient persistent callouts shown for selected persona-annotated objects */
-  personaAmbientAnnotations?: PersonaAmbientAnnotation[]
+  exactSelectionHighlight?: boolean
 }
 
 const sceneAssetCache = new Map<string, Promise<ResolvedSceneAsset>>()
@@ -210,8 +207,7 @@ export function HomeSceneViewer({
   debugOptions,
   onVertexCountChange,
   showSceneBadge = true,
-  labelMap,
-  personaAmbientAnnotations,
+  exactSelectionHighlight = false,
 }: HomeSceneViewerProps) {
   const mergedDebugOptions = useMemo(() => ({ ...DEFAULT_DEBUG_OPTIONS, ...debugOptions }), [debugOptions])
   const sceneKey = useMemo(
@@ -302,8 +298,10 @@ export function HomeSceneViewer({
   useEffect(() => {
     const trackId = focusedObject?.track_id
     const highlightKey = homeId && trackId != null ? `${sceneKey}:${trackId}` : ""
+    const shouldLoadExactHighlight =
+      (mode === "annotator" && mergedDebugOptions.showExactPoints) || exactSelectionHighlight
 
-    if (mode !== "annotator" || !mergedDebugOptions.showExactPoints || !homeId || trackId == null) {
+    if (!shouldLoadExactHighlight || !homeId || trackId == null) {
       return
     }
 
@@ -353,7 +351,16 @@ export function HomeSceneViewer({
     return () => {
       cancelled = true
     }
-  }, [focusedObject?.id, focusedObject?.label, focusedObject?.track_id, homeId, mergedDebugOptions.showExactPoints, mode, sceneKey])
+  }, [
+    exactSelectionHighlight,
+    focusedObject?.id,
+    focusedObject?.label,
+    focusedObject?.track_id,
+    homeId,
+    mergedDebugOptions.showExactPoints,
+    mode,
+    sceneKey,
+  ])
 
   useEffect(() => {
     onVertexCountChange?.(vertexCount)
@@ -387,6 +394,7 @@ export function HomeSceneViewer({
           onObjectHover={onObjectHover}
           debugOptions={mergedDebugOptions}
           exactHighlight={exactHighlight}
+          exactSelectionHighlight={exactSelectionHighlight}
           onPointCount={handlePointCount}
           onGlbError={handleGlbError}
           labelMap={labelMap}

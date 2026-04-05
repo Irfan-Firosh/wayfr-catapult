@@ -36,18 +36,25 @@ export function SceneObjectInspector({
   const focusedPinned = focusedObject ? pinnedObjectIds.includes(focusedObject.id) : false
 
   return (
-    <Card className={cn("border-border/60 bg-card/58 shadow-none backdrop-blur-2xl", className)}>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg">Inspector</CardTitle>
-        <CardDescription>
-          {focusedObject ? "Focus an object to inspect its geometry." : "Select an object to inspect its geometry."}
+    <Card
+      className={cn(
+        "border-border/60 bg-card/58 shadow-none backdrop-blur-2xl overflow-visible pb-6 pt-4",
+        className
+      )}
+    >
+      <CardHeader className="gap-2 pb-4">
+        <CardTitle className="text-lg leading-snug">Inspector</CardTitle>
+        <CardDescription className="pt-0.5 leading-relaxed">
+          {focusedObject
+            ? "Geometry, position, and visibility for the focused instance."
+            : "Select an object to inspect its geometry."}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-4">
         {focusedObject ? (
           <>
-            <div className="rounded-3xl border border-mango/20 bg-mango/8 p-4">
+            <div className="rounded-3xl border border-mango/20 bg-mango/8 p-4 pb-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-mango/80">Focused object</p>

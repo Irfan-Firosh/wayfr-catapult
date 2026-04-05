@@ -222,6 +222,22 @@ export default function DashboardPage() {
   const [homeLoading, setHomeLoading] = useState(false)
   const [homesError, setHomesError] = useState<string | null>(null)
   const [homeError, setHomeError] = useState<string | null>(null)
+  /** Home IDs that have `backend/data/scenes/<id>/scene.glb` (or SCENE_DATA_DIR); null = not loaded yet. */
+  const [localGlbHomeIds, setLocalGlbHomeIds] = useState<string[] | null>(null)
+
+  const loadLocalGlbHomeIds = useCallback(async (signal?: AbortSignal) => {
+    try {
+      const response = await fetch("/api/local-scenes", { signal, cache: "no-store" })
+      if (!response.ok) {
+        throw new Error(`Failed to list local scenes (${response.status})`)
+      }
+      const data: { home_ids?: string[] } = await response.json()
+      setLocalGlbHomeIds(data.home_ids ?? [])
+    } catch {
+      if (signal?.aborted) return
+      setLocalGlbHomeIds([])
+    }
+  }, [])
 
   const loadHomes = useCallback(async (signal?: AbortSignal) => {
     setHomesError(null)
@@ -314,21 +330,39 @@ export default function DashboardPage() {
   }, [loadHomes])
 
   useEffect(() => {
+    const controller = new AbortController()
+    void loadLocalGlbHomeIds(controller.signal)
+    return () => controller.abort()
+  }, [loadLocalGlbHomeIds])
+
+  useEffect(() => {
     if (homes.length === 0) {
       setSelectedHomeId("")
       return
     }
 
-    if (requestedHomeId && homes.some((home) => home.home_id === requestedHomeId)) {
+    if (localGlbHomeIds === null) {
+      return
+    }
+
+    const eligibleIds = new Set(localGlbHomeIds)
+    const eligibleHomes = homes.filter((home) => eligibleIds.has(home.home_id))
+
+    if (eligibleHomes.length === 0) {
+      setSelectedHomeId("")
+      return
+    }
+
+    if (requestedHomeId && eligibleHomes.some((home) => home.home_id === requestedHomeId)) {
       setSelectedHomeId((current) => (current === requestedHomeId ? current : requestedHomeId))
       return
     }
 
     setSelectedHomeId((current) => {
-      if (current && homes.some((home) => home.home_id === current)) return current
-      return homes[0]?.home_id ?? ""
+      if (current && eligibleHomes.some((home) => home.home_id === current)) return current
+      return eligibleHomes[0]?.home_id ?? ""
     })
-  }, [homes, requestedHomeId])
+  }, [homes, requestedHomeId, localGlbHomeIds])
 
   useEffect(() => {
     setSelectedHome(null)
@@ -376,17 +410,23 @@ export default function DashboardPage() {
     })
   }, [homes])
 
+  const homesWithLocalGlb = useMemo(() => {
+    if (localGlbHomeIds === null) return []
+    const eligible = new Set(localGlbHomeIds)
+    return sortedHomes.filter((home) => eligible.has(home.home_id))
+  }, [sortedHomes, localGlbHomeIds])
+
   const filteredHomes = useMemo(() => {
     const query = historyQuery.trim().toLowerCase()
-    if (!query) return sortedHomes
-    return sortedHomes.filter((home) => {
+    if (!query) return homesWithLocalGlb
+    return homesWithLocalGlb.filter((home) => {
       return (
         home.name.toLowerCase().includes(query) ||
         home.home_id.toLowerCase().includes(query) ||
         home.status.toLowerCase().includes(query)
       )
     })
-  }, [historyQuery, sortedHomes])
+  }, [historyQuery, homesWithLocalGlb])
 
   const activeHome = useMemo(() => {
     if (selectedHome?.home_id === selectedHomeId) {
@@ -451,10 +491,11 @@ export default function DashboardPage() {
 
   const refreshAll = useCallback(() => {
     void loadHomes()
+    void loadLocalGlbHomeIds()
     if (selectedHomeId) {
       void loadSelectedHome(selectedHomeId)
     }
-  }, [loadHomes, loadSelectedHome, selectedHomeId])
+  }, [loadHomes, loadLocalGlbHomeIds, loadSelectedHome, selectedHomeId])
 
   const activateObject = useCallback((objectId: string, additive = false) => {
     setSelectedObjectIds((current) => {
@@ -511,21 +552,15 @@ export default function DashboardPage() {
   }, [])
 
   const navigateRelative = useCallback(
-    (delta: number, scope: "all" | "class") => {
+    (delta: number) => {
       if (visibleObjects.length === 0) return
-
-      const candidates =
-        scope === "class" && focusedObject
-          ? visibleObjects.filter((object) => object.label === focusedObject.label)
-          : visibleObjects
-
-      if (candidates.length === 0) return
-      const currentIndex = focusedObjectId ? candidates.findIndex((object) => object.id === focusedObjectId) : -1
-      const nextIndex = currentIndex >= 0 ? (currentIndex + delta + candidates.length) % candidates.length : 0
-      const nextObject = candidates[nextIndex]
+      const currentIndex = focusedObjectId ? visibleObjects.findIndex((object) => object.id === focusedObjectId) : -1
+      const nextIndex =
+        currentIndex >= 0 ? (currentIndex + delta + visibleObjects.length) % visibleObjects.length : 0
+      const nextObject = visibleObjects[nextIndex]
       if (nextObject) activateObject(nextObject.id)
     },
-    [activateObject, focusedObject, focusedObjectId, visibleObjects]
+    [activateObject, focusedObjectId, visibleObjects]
   )
 
   const cameraCommand = useMemo(
@@ -535,7 +570,8 @@ export default function DashboardPage() {
 
   const showReadyScene = activeHome?.status === "ready" && !homeError
   const showSceneControls = showReadyScene
-  const showSideRail = homes.length > 0 && !homesError
+  const showSideRail =
+    homes.length > 0 && !homesError && (localGlbHomeIds === null || homesWithLocalGlb.length > 0)
 
   return (
     <div className="dark relative h-full min-h-0 overflow-hidden bg-[#030507] text-white">
@@ -547,6 +583,7 @@ export default function DashboardPage() {
             sceneVersion={sceneVersion}
             objects={visibleObjects}
             mode="annotator"
+            exactSelectionHighlight
             focusedObjectId={focusedObjectId}
             selectedObjectIds={selectedObjectIds}
             hoveredObjectId={hoveredObjectId}
@@ -614,11 +651,20 @@ export default function DashboardPage() {
         </div>
       ) : null}
 
+      {!homesLoading && homes.length > 0 && localGlbHomeIds !== null && homesWithLocalGlb.length === 0 && !homesError ? (
+        <div className="absolute inset-0 z-20 flex items-center justify-center p-4">
+          <StageStateCard
+            title="No local GLB scenes"
+            description="The scene switcher only lists homes that have scene.glb on disk (see backend/data/scenes or SCENE_DATA_DIR). Other API entries are hidden until the mesh is available locally."
+          />
+        </div>
+      ) : null}
+
       {showSideRail ? (
         <>
-          <div className="pointer-events-none absolute inset-x-0 bottom-20 z-40 p-3 sm:inset-y-0 sm:right-0 sm:left-auto sm:w-[452px] sm:p-5">
-            <aside className="pointer-events-auto mx-auto flex max-h-[min(68dvh,760px)] w-full max-w-[420px] flex-col gap-3 overflow-y-auto pr-1 sm:h-full sm:max-h-[calc(100dvh-2.5rem)]">
-              <div className="rounded-[28px] border border-white/10 bg-black/48 p-4 backdrop-blur-2xl">
+          <div className="pointer-events-none absolute inset-x-0 bottom-20 z-40 flex min-h-0 flex-col p-3 sm:inset-y-0 sm:right-0 sm:left-auto sm:h-full sm:w-[452px] sm:p-5">
+            <aside className="pointer-events-auto mx-auto flex h-[min(68dvh,760px)] w-full max-w-[420px] min-h-0 flex-col gap-3 sm:h-full sm:min-h-0 sm:flex-1">
+              <div className="shrink-0 rounded-[28px] border border-white/10 bg-black/48 p-4 backdrop-blur-2xl">
                 <div className="flex items-start justify-between gap-3">
                   <button
                     type="button"
@@ -673,7 +719,11 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="mt-3 max-h-[260px] space-y-2 overflow-y-auto pr-1">
-                      {filteredHomes.length > 0 ? (
+                      {localGlbHomeIds === null ? (
+                        <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-5 text-sm text-white/50">
+                          Checking which scenes have a local .glb…
+                        </div>
+                      ) : filteredHomes.length > 0 ? (
                         filteredHomes.map((home) => {
                           const isSelected = home.home_id === activeHome?.home_id
 
@@ -717,38 +767,40 @@ export default function DashboardPage() {
               </div>
 
               {activeHome?.status === "ready" ? (
-                <>
-                  <SceneObjectInspector
-                    focusedObject={focusedObject}
-                    selectedObjects={selectedObjects}
-                    pinnedObjectIds={pinnedObjectIds}
-                    displayMode={displayMode}
-                    onClearSelection={clearSelection}
-                    onToggleIsolate={toggleIsolate}
-                    onTogglePin={togglePin}
-                    onHideObject={hideObject}
-                    onHideLabel={toggleLabelVisibility}
-                  />
+                <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain pr-1 pb-1 [scrollbar-gutter:stable]">
+                  <div className="flex flex-col gap-3 pb-3">
+                    <SceneObjectInspector
+                      focusedObject={focusedObject}
+                      selectedObjects={selectedObjects}
+                      pinnedObjectIds={pinnedObjectIds}
+                      displayMode={displayMode}
+                      onClearSelection={clearSelection}
+                      onToggleIsolate={toggleIsolate}
+                      onTogglePin={togglePin}
+                      onHideObject={hideObject}
+                      onHideLabel={toggleLabelVisibility}
+                    />
 
-                  <SceneObjectBrowser
-                    objects={visibleObjects}
-                    query={objectQuery}
-                    selectedObjectIds={selectedObjectIds}
-                    focusedObjectId={focusedObjectId}
-                    pinnedObjectIds={pinnedObjectIds}
-                    hiddenLabels={hiddenLabels}
-                    hiddenObjectIds={hiddenObjectIds}
-                    onQueryChange={setObjectQuery}
-                    onSelectObject={activateObject}
-                    onSelectLabel={selectLabelGroup}
-                    onHoverObject={setHoveredObjectId}
-                    onTogglePin={togglePin}
-                    onHideObject={hideObject}
-                    onToggleLabelVisibility={toggleLabelVisibility}
-                    onResetVisibility={resetVisibility}
-                    listClassName="max-h-[280px] sm:max-h-[340px]"
-                  />
-                </>
+                    <SceneObjectBrowser
+                      objects={visibleObjects}
+                      query={objectQuery}
+                      selectedObjectIds={selectedObjectIds}
+                      focusedObjectId={focusedObjectId}
+                      pinnedObjectIds={pinnedObjectIds}
+                      hiddenLabels={hiddenLabels}
+                      hiddenObjectIds={hiddenObjectIds}
+                      onQueryChange={setObjectQuery}
+                      onSelectObject={activateObject}
+                      onSelectLabel={selectLabelGroup}
+                      onHoverObject={setHoveredObjectId}
+                      onTogglePin={togglePin}
+                      onHideObject={hideObject}
+                      onToggleLabelVisibility={toggleLabelVisibility}
+                      onResetVisibility={resetVisibility}
+                      listClassName="max-h-[min(280px,40dvh)] sm:max-h-[min(340px,45dvh)]"
+                    />
+                  </div>
+                </div>
               ) : null}
             </aside>
           </div>
@@ -758,17 +810,15 @@ export default function DashboardPage() {
       {showSceneControls ? (
         <div
           className={cn(
-            "pointer-events-none absolute bottom-4 z-30 flex justify-center px-3 sm:bottom-5",
-            showSideRail
-              ? "left-0 right-0 sm:right-[calc(452px+1.25rem)]"
-              : "left-1/2 w-[min(980px,calc(100%-1.5rem))] -translate-x-1/2 sm:w-[min(980px,calc(100%-3rem))]"
+            "pointer-events-none absolute bottom-4 left-0 right-0 z-30 flex justify-center px-3 sm:bottom-5",
+            showSideRail ? "sm:right-[calc(452px+1.25rem)]" : null
           )}
         >
-          <div className="pointer-events-auto flex w-full max-w-[980px] flex-wrap items-center justify-center gap-2 rounded-[24px] border border-white/10 bg-black/42 px-3 py-3 backdrop-blur-2xl">
+          <div className="pointer-events-auto mx-auto flex w-fit max-w-[min(100%,36rem)] flex-wrap items-center justify-center gap-2 rounded-[24px] border border-white/10 bg-black/42 px-3 py-2.5 backdrop-blur-2xl sm:max-w-[min(100%,42rem)] sm:px-4 sm:py-3">
             <Button
               variant="outline"
               className="rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10"
-              onClick={() => navigateRelative(-1, "all")}
+              onClick={() => navigateRelative(-1)}
             >
               <ChevronLeft className="mr-2 h-4 w-4" />
               Previous
@@ -776,18 +826,10 @@ export default function DashboardPage() {
             <Button
               variant="outline"
               className="rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10"
-              onClick={() => navigateRelative(1, "all")}
+              onClick={() => navigateRelative(1)}
             >
               Next
               <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              className="rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10"
-              onClick={() => navigateRelative(1, "class")}
-              disabled={!focusedObject}
-            >
-              Next in class
             </Button>
             <Button
               variant="outline"
