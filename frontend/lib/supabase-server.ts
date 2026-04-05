@@ -1,14 +1,26 @@
 import { createClient } from "@supabase/supabase-js"
 
-let _client: ReturnType<typeof createClient> | null = null
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+const key =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.SUPABASE_SERVICE_KEY
 
-export function getSupabase() {
-  if (_client) return _client
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_KEY
-  if (!url || !key) {
-    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_KEY")
-  }
-  _client = createClient(url, key)
-  return _client
+if (!url) {
+  throw new Error("NEXT_PUBLIC_SUPABASE_URL is not set")
 }
+if (!key) {
+  throw new Error(
+    "SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_SERVICE_KEY) is not set"
+  )
+}
+
+const client = createClient(url, key, {
+  auth: { persistSession: false },
+})
+
+/** Lazy-style accessor used by marketplace routes. */
+export function getSupabase() {
+  return client
+}
+
+/** Direct export used by persona routes. */
+export const supabaseServer = client

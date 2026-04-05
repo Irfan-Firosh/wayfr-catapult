@@ -79,6 +79,10 @@ export interface HomeSceneViewerProps {
   onVertexCountChange?: (count: number) => void
   showSceneBadge?: boolean
   exactSelectionHighlight?: boolean
+  /** Maps objectId → display label override (e.g. persona label) */
+  labelMap?: Record<string, string>
+  /** Ambient persistent callouts for persona-annotated objects */
+  personaAmbientAnnotations?: PersonaAmbientAnnotation[]
 }
 
 const sceneAssetCache = new Map<string, Promise<ResolvedSceneAsset>>()
@@ -208,6 +212,8 @@ export function HomeSceneViewer({
   onVertexCountChange,
   showSceneBadge = true,
   exactSelectionHighlight = false,
+  labelMap,
+  personaAmbientAnnotations,
 }: HomeSceneViewerProps) {
   const mergedDebugOptions = useMemo(() => ({ ...DEFAULT_DEBUG_OPTIONS, ...debugOptions }), [debugOptions])
   const sceneKey = useMemo(

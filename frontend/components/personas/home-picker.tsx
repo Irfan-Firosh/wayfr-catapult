@@ -37,13 +37,20 @@ export function HomePicker({ onSelect, selectedHomeId }: HomePickerProps) {
     setLoading(true)
     setError(null)
 
-    fetch(`${API_URL}/api/homes`, { signal: controller.signal, cache: "no-store" })
-      .then((res) => {
-        if (!res.ok) throw new Error(`Failed to load scenes (${res.status})`)
-        return res.json() as Promise<{ homes?: HomeSummary[] }>
-      })
-      .then((data) => {
-        setHomes(data.homes ?? [])
+    Promise.all([
+      fetch(`${API_URL}/api/homes`, { signal: controller.signal, cache: "no-store" })
+        .then((res) => {
+          if (!res.ok) throw new Error(`Failed to load scenes (${res.status})`)
+          return res.json() as Promise<{ homes?: HomeSummary[] }>
+        }),
+      fetch("/api/local-scenes", { signal: controller.signal, cache: "no-store" })
+        .then((res) => (res.ok ? (res.json() as Promise<{ home_ids?: string[] }>) : { home_ids: [] }))
+        .catch(() => ({ home_ids: [] as string[] })),
+    ])
+      .then(([homesData, localData]) => {
+        const localSet = new Set(localData.home_ids ?? [])
+        const filtered = (homesData.homes ?? []).filter((h) => localSet.has(h.home_id))
+        setHomes(filtered)
       })
       .catch((err: unknown) => {
         if (err instanceof Error && err.name === "AbortError") return
@@ -75,7 +82,7 @@ export function HomePicker({ onSelect, selectedHomeId }: HomePickerProps) {
     return (
       <div className="flex items-center gap-2 rounded-2xl border border-border/40 bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
         <Box className="h-4 w-4 shrink-0" />
-        No scanned spaces found. Upload a video on the Dashboard first.
+        No local scenes found. Make sure your scanned spaces have a scene.glb file available.
       </div>
     )
   }

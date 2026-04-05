@@ -229,7 +229,7 @@ function PromptInput({ value, onChange, onSubmit, disabled, placeholder }: Promp
   }, [value])
 
   return (
-    <div className="rounded-[28px] border border-border/50 bg-background/88 p-2 shadow-[0_18px_50px_rgba(0,0,0,0.06)] backdrop-blur-xl transition-colors dark:bg-background/78 dark:shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
+    <div className="rounded-[28px] border border-border/50 bg-background/88 p-2 shadow-[0_18px_50px_rgba(0,0,0,0.06)] backdrop-blur-xl transition-colors dark:border-white/12 dark:bg-[oklch(0.18_0.008_60)] dark:shadow-[0_24px_80px_rgba(0,0,0,0.32)]">
       <textarea
         ref={textareaRef}
         rows={1}
@@ -314,6 +314,18 @@ async function parseStream(
   return accumulated
 }
 
+// ── Logging helpers ───────────────────────────────────────────────────────────
+
+function fireAndForget(url: string, body: unknown) {
+  fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  }).catch(() => {
+    // intentionally swallowed — logging must never break UX
+  })
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export function PersonaConsole() {
@@ -327,7 +339,29 @@ export function PersonaConsole() {
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
   const annotatingRef = useRef(false)
+  // Logging state
+  const sessionIdRef = useRef<string>(nanoid())
+  const sessionCreatedRef = useRef(false)
+  const seqRef = useRef(0)
+  const originalPersonaRef = useRef<PersonaProfile | null>(null)
   const isActive = messages.length > 0
+
+  function ensureSession() {
+    if (sessionCreatedRef.current) return
+    sessionCreatedRef.current = true
+    fireAndForget("/api/personas/log/session", { session_id: sessionIdRef.current })
+  }
+
+  function logMessage(role: "user" | "assistant", messageType: string, content: unknown) {
+    const seq = seqRef.current++
+    fireAndForget("/api/personas/log/message", {
+      session_id: sessionIdRef.current,
+      seq,
+      role,
+      message_type: messageType,
+      content,
+    })
+  }
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -342,6 +376,9 @@ export function PersonaConsole() {
   const runDetection = useCallback(async (prompt: string) => {
     const userMsgId = nanoid()
     const assistantMsgId = nanoid()
+
+    ensureSession()
+    logMessage("user", "text", { text: prompt })
 
     setMessages((prev) => [
       ...prev,
@@ -390,9 +427,17 @@ export function PersonaConsole() {
         )
       )
 
+      const displayText = fullText
+        .replace(/<persona_json>[\s\S]*?<\/persona_json>/g, "")
+        .replace(/<persona_json>[\s\S]*/g, "")
+        .trim()
+      logMessage("assistant", "text", { text: displayText })
+
       const persona = extractPersonaJson(fullText)
       if (persona) {
+        originalPersonaRef.current = persona
         setCurrentPersona(persona)
+        logMessage("assistant", "persona_badge", { persona })
         // Append persona badge + editor (user reviews/edits before picking space)
         setMessages((prev) => [
           ...prev,
@@ -459,6 +504,17 @@ export function PersonaConsole() {
         }
         const plan = await annRes.json() as AnnotationPlan
 
+        // Log annotation plan
+        fireAndForget("/api/personas/log/annotation", {
+          session_id: sessionIdRef.current,
+          home_id: homeId,
+          home_name: homeName,
+          persona_role: persona.role,
+          plan,
+          scene_object_count: objects.length,
+        })
+        logMessage("assistant", "scene", { homeId, homeName, plan_summary: plan.summary })
+
         // Replace loading bubble with scene card
         setMessages((prev) => [
           ...prev.filter((m) => m.id !== loadingId),
@@ -501,6 +557,14 @@ export function PersonaConsole() {
   // ── Persona editor confirm ─────────────────────────────────────────────────
 
   const handleEditorConfirm = useCallback((editedPersona: PersonaProfile) => {
+    const wasEdited =
+      originalPersonaRef.current !== null &&
+      JSON.stringify(editedPersona) !== JSON.stringify(originalPersonaRef.current)
+    fireAndForget("/api/personas/log/profile", {
+      session_id: sessionIdRef.current,
+      persona: editedPersona,
+      was_edited: wasEdited,
+    })
     setCurrentPersona(editedPersona)
     setMessages((prev) => [
       ...prev,
