@@ -1,0 +1,213 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - link "w" [ref=e8] [cursor=pointer]:
+          - /url: /dashboard
+          - generic [ref=e10]: w
+        - button "Toggle Sidebar" [ref=e12]:
+          - img
+          - generic [ref=e13]: Toggle Sidebar
+      - separator [ref=e14]
+      - list [ref=e16]:
+        - listitem [ref=e17]:
+          - link "Dashboard" [ref=e18] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e19]
+            - generic: Dashboard
+        - listitem [ref=e24]:
+          - link "Personas" [ref=e25] [cursor=pointer]:
+            - /url: /personas
+            - img [ref=e26]
+            - generic: Personas
+        - listitem [ref=e29]:
+          - link "Setup" [ref=e30] [cursor=pointer]:
+            - /url: /setup
+            - img [ref=e31]
+            - generic: Setup
+      - separator [ref=e38]
+      - generic [ref=e40]:
+        - button "Toggle theme" [ref=e41]:
+          - img
+        - button "Open user menu" [ref=e74] [cursor=pointer]:
+          - img "MeoPlayzzz's logo" [ref=e77]
+      - button "Toggle Sidebar" [ref=e43]
+    - main [ref=e44]:
+      - main [ref=e45]:
+        - generic [ref=e46]:
+          - generic [ref=e79]:
+            - generic [ref=e81]: I'm a firefighter doing a structural safety inspection of this building
+            - generic [ref=e83]: As a firefighter, I'll highlight potential hazards and critical escape routes for you, focusing on stairwells, doors, and emergency exits. I'll also draw attention to any potential fire spread risks, such as open corridors or combustible materials. This will help you quickly identify areas of concern during your inspection.
+            - generic [ref=e85]:
+              - generic [ref=e86]:
+                - img [ref=e88]
+                - generic [ref=e91]:
+                  - paragraph [ref=e92]: Firefighter
+                  - paragraph [ref=e93]: Needs to quickly identify potential fire hazards and ensure safe escape routes during a structural safety inspection.
+              - generic [ref=e94]:
+                - generic [ref=e95]: Identify potential fire hazards
+                - generic [ref=e96]: Locate emergency exits
+                - generic [ref=e97]: Assess fire spread risks
+              - generic [ref=e98]:
+                - generic [ref=e103]: safety-focused view
+                - generic [ref=e104]:
+                  - img [ref=e105]
+                  - text: 2 new annotation types
+            - generic [ref=e108]:
+              - paragraph [ref=e109]: Choose a space to annotate
+              - generic [ref=e110]:
+                - button "ANSH NEW ROOM 22 objects" [ref=e111]:
+                  - generic [ref=e112]:
+                    - generic [ref=e113]: ANSH NEW ROOM
+                    - img [ref=e114]
+                  - generic [ref=e117]:
+                    - img [ref=e118]
+                    - text: 22 objects
+                - button "Ansh 30 objects" [ref=e121]:
+                  - generic [ref=e122]:
+                    - generic [ref=e123]: Ansh
+                    - img [ref=e124]
+                  - generic [ref=e127]:
+                    - img [ref=e128]
+                    - text: 30 objects
+                - button "My Home 0 objects" [disabled] [ref=e131]:
+                  - generic [ref=e132]:
+                    - generic [ref=e133]: My Home
+                    - img [ref=e134]
+                  - generic [ref=e138]:
+                    - img [ref=e139]
+                    - text: 0 objects
+                - button "chuddy 26 objects" [ref=e142]:
+                  - generic [ref=e143]:
+                    - generic [ref=e144]: chuddy
+                    - img [ref=e145]
+                  - generic [ref=e148]:
+                    - img [ref=e149]
+                    - text: 26 objects
+                - button "ansh chyud room v 0 objects" [disabled] [ref=e152]:
+                  - generic [ref=e153]:
+                    - generic [ref=e154]: ansh chyud room v
+                    - img [ref=e155]
+                  - generic [ref=e159]:
+                    - img [ref=e160]
+                    - text: 0 objects
+                - button "My Home 0 objects" [disabled] [ref=e163]:
+                  - generic [ref=e164]:
+                    - generic [ref=e165]: My Home
+                    - img [ref=e166]
+                  - generic [ref=e170]:
+                    - img [ref=e171]
+                    - text: 0 objects
+                - button "My Home 35 objects" [active] [pressed] [ref=e174]:
+                  - generic [ref=e175]:
+                    - generic [ref=e176]: My Home
+                    - img [ref=e177]
+                  - generic [ref=e180]:
+                    - img [ref=e181]
+                    - text: 35 objects
+                - button "My Home 35 objects" [ref=e185]:
+                  - generic [ref=e186]:
+                    - generic [ref=e187]: My Home
+                    - img [ref=e188]
+                  - generic [ref=e191]:
+                    - img [ref=e192]
+                    - text: 35 objects
+                - button "dorm room 35 objects" [ref=e195]:
+                  - generic [ref=e196]:
+                    - generic [ref=e197]: dorm room
+                    - img [ref=e198]
+                  - generic [ref=e201]:
+                    - img [ref=e202]
+                    - text: 35 objects
+                - button "dorm 0 objects" [disabled] [ref=e205]:
+                  - generic [ref=e206]:
+                    - generic [ref=e207]: dorm
+                    - img [ref=e208]
+                  - generic [ref=e212]:
+                    - img [ref=e213]
+                    - text: 0 objects
+                - button "dorm 0 objects" [disabled] [ref=e216]:
+                  - generic [ref=e217]:
+                    - generic [ref=e218]: dorm
+                    - img [ref=e219]
+                  - generic [ref=e223]:
+                    - img [ref=e224]
+                    - text: 0 objects
+                - button "Dorm room 0 objects" [disabled] [ref=e227]:
+                  - generic [ref=e228]:
+                    - generic [ref=e229]: Dorm room
+                    - img [ref=e230]
+                  - generic [ref=e234]:
+                    - img [ref=e235]
+                    - text: 0 objects
+                - button "ansh g 35 objects" [ref=e238]:
+                  - generic [ref=e239]:
+                    - generic [ref=e240]: ansh g
+                    - img [ref=e241]
+                  - generic [ref=e244]:
+                    - img [ref=e245]
+                    - text: 35 objects
+                - button "amsh room 1 35 objects" [ref=e248]:
+                  - generic [ref=e249]:
+                    - generic [ref=e250]: amsh room 1
+                    - img [ref=e251]
+                  - generic [ref=e254]:
+                    - img [ref=e255]
+                    - text: 35 objects
+                - button "Ansh 33 objects" [ref=e258]:
+                  - generic [ref=e259]:
+                    - generic [ref=e260]: Ansh
+                    - img [ref=e261]
+                  - generic [ref=e264]:
+                    - img [ref=e265]
+                    - text: 33 objects
+                - button "Ansh 0 objects" [disabled] [ref=e268]:
+                  - generic [ref=e269]:
+                    - generic [ref=e270]: Ansh
+                    - img [ref=e271]
+                  - generic [ref=e273]:
+                    - img [ref=e274]
+                    - text: 0 objects
+                - button "My Home 0 objects" [disabled] [ref=e277]:
+                  - generic [ref=e278]:
+                    - generic [ref=e279]: My Home
+                    - img [ref=e280]
+                  - generic [ref=e282]:
+                    - img [ref=e283]
+                    - text: 0 objects
+                - button "Irfan Room 28 objects" [ref=e286]:
+                  - generic [ref=e287]:
+                    - generic [ref=e288]: Irfan Room
+                    - img [ref=e289]
+                  - generic [ref=e292]:
+                    - img [ref=e293]
+                    - text: 28 objects
+                - button "anshs room test 1 35 objects" [ref=e296]:
+                  - generic [ref=e297]:
+                    - generic [ref=e298]: anshs room test 1
+                    - img [ref=e299]
+                  - generic [ref=e302]:
+                    - img [ref=e303]
+                    - text: 35 objects
+                - button "Ansh 33 objects" [ref=e306]:
+                  - generic [ref=e307]:
+                    - generic [ref=e308]: Ansh
+                    - img [ref=e309]
+                  - generic [ref=e312]:
+                    - img [ref=e313]
+                    - text: 33 objects
+            - generic [ref=e316]:
+              - img [ref=e317]
+              - text: Building your personalized view…
+            - generic [ref=e319]:
+              - img [ref=e320]
+              - text: Building your personalized view…
+          - generic [ref=e55]:
+            - textbox "Describe your role or what you're looking for…" [disabled] [ref=e56]
+            - button "Send" [disabled] [ref=e58]:
+              - img [ref=e59]
+              - generic [ref=e61]: Send
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e68] [cursor=pointer]:
+    - img [ref=e69]
+  - alert [ref=e72]

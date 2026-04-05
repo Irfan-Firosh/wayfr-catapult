@@ -14,6 +14,7 @@ import type {
   CameraCommand,
   ExactObjectHighlight,
   ObjectItem,
+  PersonaAmbientAnnotation,
   SceneColorMode,
   SceneDebugOptions,
   SceneDisplayMode,
@@ -146,38 +147,120 @@ function FocusCallout({
   meta,
   color,
   tone,
+  labelOverride,
 }: {
   obj: ObjectItem
   meta: ObjectFocusMeta
   color: number
   tone: "selected" | "hover"
+  labelOverride?: string
 }) {
   const hex = `#${color.toString(16).padStart(6, "0")}`
+  const displayLabel = labelOverride ?? obj.label
+  const showOriginal = labelOverride && labelOverride !== obj.label
 
   return (
     <Html center position={meta.labelPosition} distanceFactor={11} occlude={false} style={{ pointerEvents: "none" }}>
       <div
         style={{
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
-          gap: "6px",
-          padding: tone === "selected" ? "6px 12px" : "5px 10px",
-          borderRadius: "999px",
-          border: `1px solid ${hex}55`,
-          background:
-            tone === "selected"
-              ? `linear-gradient(180deg, rgba(8,10,15,0.9), ${hex}2f)`
-              : `linear-gradient(180deg, rgba(8,10,15,0.76), ${hex}1b)`,
-          boxShadow: "0 18px 46px rgba(0,0,0,0.34)",
-          backdropFilter: "blur(18px)",
-          whiteSpace: "nowrap",
-          fontFamily: "monospace",
-          fontSize: tone === "selected" ? "12px" : "10px",
-          lineHeight: "1.4",
-          color: "#fff7ea",
+          gap: "3px",
+          pointerEvents: "none",
         }}
       >
-        <span style={{ fontWeight: 700 }}>{obj.label}</span>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            padding: tone === "selected" ? "6px 13px" : "5px 10px",
+            borderRadius: "999px",
+            border: `1px solid ${hex}55`,
+            background:
+              tone === "selected"
+                ? `linear-gradient(180deg, rgba(8,10,15,0.92), ${hex}35)`
+                : `linear-gradient(180deg, rgba(8,10,15,0.76), ${hex}1b)`,
+            boxShadow: tone === "selected" ? `0 18px 46px rgba(0,0,0,0.38), 0 0 20px ${hex}22` : "0 12px 32px rgba(0,0,0,0.28)",
+            backdropFilter: "blur(18px)",
+            whiteSpace: "nowrap",
+            fontFamily: "monospace",
+            fontSize: tone === "selected" ? "12px" : "10px",
+            lineHeight: "1.4",
+            color: "#fff7ea",
+          }}
+        >
+          {tone === "selected" && (
+            <span style={{
+              width: "6px", height: "6px", borderRadius: "50%",
+              backgroundColor: hex, flexShrink: 0, opacity: 0.9,
+            }} />
+          )}
+          <span style={{ fontWeight: 700 }}>{displayLabel}</span>
+        </div>
+        {showOriginal && tone === "selected" && (
+          <div style={{
+            padding: "2px 8px",
+            borderRadius: "999px",
+            background: "rgba(8,10,15,0.72)",
+            backdropFilter: "blur(12px)",
+            fontFamily: "monospace",
+            fontSize: "9px",
+            color: "rgba(255,247,234,0.45)",
+            whiteSpace: "nowrap",
+          }}>
+            {obj.label}
+          </div>
+        )}
+      </div>
+    </Html>
+  )
+}
+
+function PersonaAmbientCallout({
+  meta,
+  annotation,
+  isFocused,
+}: {
+  meta: ObjectFocusMeta
+  annotation: PersonaAmbientAnnotation
+  isFocused: boolean
+}) {
+  // Don't render when the object is focused — FocusCallout takes over
+  if (isFocused) return null
+
+  return (
+    <Html
+      center
+      position={meta.labelPosition}
+      distanceFactor={14}
+      occlude={false}
+      style={{ pointerEvents: "none" }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "5px",
+          padding: "3px 9px 3px 7px",
+          borderRadius: "999px",
+          border: `1px solid ${annotation.color}40`,
+          background: `linear-gradient(180deg, rgba(8,10,15,0.80), ${annotation.color}18)`,
+          backdropFilter: "blur(14px)",
+          whiteSpace: "nowrap",
+          fontFamily: "monospace",
+          fontSize: "9px",
+          lineHeight: "1.4",
+          color: annotation.color,
+          boxShadow: `0 8px 24px rgba(0,0,0,0.30)`,
+        }}
+      >
+        <span style={{
+          width: "4px", height: "4px", borderRadius: "50%",
+          backgroundColor: annotation.color, flexShrink: 0,
+        }} />
+        <span style={{ fontWeight: 600 }}>{annotation.label}</span>
       </div>
     </Html>
   )
@@ -452,6 +535,7 @@ function AnnotatorSelectionLayer({
   exactHighlight,
   displayMode,
   colorMode,
+  labelMap,
 }: {
   objects: ObjectItem[]
   focusedObjectId: string | null
@@ -463,6 +547,7 @@ function AnnotatorSelectionLayer({
   exactHighlight: ExactObjectHighlight | null
   displayMode: SceneDisplayMode
   colorMode: SceneColorMode
+  labelMap?: Record<string, string>
 }) {
   const objectById = useMemo(() => new Map(objects.map((object) => [object.id, object])), [objects])
   const selectedSet = useMemo(() => new Set(selectedObjectIds), [selectedObjectIds])
@@ -530,12 +615,24 @@ function AnnotatorSelectionLayer({
       {hoveredObject && hoveredMeta ? (
         <>
           <SelectionAura meta={hoveredMeta} color={HOVER_ACCENT} strength="hover" />
-          <FocusCallout obj={hoveredObject} meta={hoveredMeta} color={HOVER_ACCENT} tone="hover" />
+          <FocusCallout
+            obj={hoveredObject}
+            meta={hoveredMeta}
+            color={HOVER_ACCENT}
+            tone="hover"
+            labelOverride={labelMap?.[hoveredObject.id]}
+          />
         </>
       ) : null}
 
       {focusedObject && focusedMeta ? (
-        <FocusCallout obj={focusedObject} meta={focusedMeta} color={SELECTED_ACCENT} tone="selected" />
+        <FocusCallout
+          obj={focusedObject}
+          meta={focusedMeta}
+          color={SELECTED_ACCENT}
+          tone="selected"
+          labelOverride={labelMap?.[focusedObject.id]}
+        />
       ) : null}
 
       {debugOptions.showApproxRegion && hoveredMeta ? <ApproximateRegionDebug meta={hoveredMeta} color={HOVER_ACCENT} /> : null}
@@ -587,6 +684,8 @@ function SceneContent({
   exactHighlight,
   onPointCount,
   onGlbError,
+  labelMap,
+  personaAmbientAnnotations,
 }: {
   glbUrl: string
   objects: ObjectItem[]
@@ -606,6 +705,8 @@ function SceneContent({
   exactHighlight: ExactObjectHighlight | null
   onPointCount: (n: number) => void
   onGlbError: () => void
+  labelMap?: Record<string, string>
+  personaAmbientAnnotations?: PersonaAmbientAnnotation[]
 }) {
   const navActive = !!path && path.length > 0
   const targetLower = targetLabel?.toLowerCase()
@@ -629,10 +730,11 @@ function SceneContent({
         <ExploreCamera objects={objects} focusedObject={focusedObject} cameraCommand={cameraCommand} />
       )}
 
-      <ambientLight intensity={0.35} color={0xffffff} />
-      <hemisphereLight intensity={0.65} color={0xf6efe6} groundColor={0x4c4338} />
-      <directionalLight position={[6, 8, 4]} intensity={0.65} color={0xffffff} />
-      <fog attach="fog" args={[BG, 12, 30]} />
+      <ambientLight intensity={0.55} color={0xfff8f0} />
+      <hemisphereLight intensity={0.72} color={0xf6efe6} groundColor={0x3a2e24} />
+      <directionalLight position={[6, 8, 4]} intensity={0.75} color={0xfff5e8} castShadow />
+      <directionalLight position={[-4, 3, -6]} intensity={0.22} color={0xc8d8ff} />
+      <fog attach="fog" args={[BG, 18, 52]} />
 
       <SceneGrid objects={objects} />
 
@@ -659,6 +761,7 @@ function SceneContent({
           exactHighlight={exactHighlight}
           displayMode={displayMode}
           colorMode={colorMode}
+          labelMap={labelMap}
         />
       ) : (
         objects.map((object, index) => (
@@ -671,6 +774,20 @@ function SceneContent({
           />
         ))
       )}
+
+      {personaAmbientAnnotations && personaAmbientAnnotations.map((ann) => {
+        const obj = objectById.get(ann.objectId)
+        if (!obj) return null
+        const meta = getObjectFocusMeta(obj)
+        return (
+          <PersonaAmbientCallout
+            key={`persona-ambient-${ann.objectId}`}
+            meta={meta}
+            annotation={ann}
+            isFocused={focusedObjectId === ann.objectId}
+          />
+        )
+      })}
 
       {navActive ? <NavigationPath path={path} currentStepIndex={currentStepIndex} /> : null}
       <GizmoHelper alignment="bottom-right" margin={[82, 82]}>
@@ -699,6 +816,8 @@ interface HomeSceneInnerProps {
   exactHighlight: ExactObjectHighlight | null
   onPointCount: (n: number) => void
   onGlbError: () => void
+  labelMap?: Record<string, string>
+  personaAmbientAnnotations?: PersonaAmbientAnnotation[]
 }
 
 export function HomeSceneInner({
@@ -720,6 +839,8 @@ export function HomeSceneInner({
   exactHighlight,
   onPointCount,
   onGlbError,
+  labelMap,
+  personaAmbientAnnotations,
 }: HomeSceneInnerProps) {
   const [canvasReady, setCanvasReady] = useState(false)
 
@@ -728,7 +849,7 @@ export function HomeSceneInner({
       <Canvas
         camera={{ position: [-2.4, 3.2, -2.8], fov: 48, near: 0.01, far: 1000 }}
         gl={{ antialias: true }}
-        dpr={[1, 1.75]}
+        dpr={[1, 2]}
         onCreated={() => setCanvasReady(true)}
       >
         <color attach="background" args={[BG]} />
@@ -752,6 +873,8 @@ export function HomeSceneInner({
             exactHighlight={exactHighlight}
             onPointCount={onPointCount}
             onGlbError={onGlbError}
+            labelMap={labelMap}
+            personaAmbientAnnotations={personaAmbientAnnotations}
           />
         ) : null}
       </Canvas>

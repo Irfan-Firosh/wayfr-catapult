@@ -1,0 +1,49 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - link "w" [ref=e8] [cursor=pointer]:
+          - /url: /dashboard
+          - generic [ref=e10]: w
+        - button "Toggle Sidebar" [ref=e12]:
+          - img
+          - generic [ref=e13]: Toggle Sidebar
+      - separator [ref=e14]
+      - list [ref=e16]:
+        - listitem [ref=e17]:
+          - link "Dashboard" [ref=e18] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e19]
+            - generic: Dashboard
+        - listitem [ref=e24]:
+          - link "Personas" [ref=e25] [cursor=pointer]:
+            - /url: /personas
+            - img [ref=e26]
+            - generic: Personas
+        - listitem [ref=e29]:
+          - link "Setup" [ref=e30] [cursor=pointer]:
+            - /url: /setup
+            - img [ref=e31]
+            - generic: Setup
+      - separator [ref=e38]
+      - generic [ref=e40]:
+        - button "Toggle theme" [ref=e41]:
+          - img
+        - button "Open user menu" [ref=e74] [cursor=pointer]:
+          - img "MeoPlayzzz's logo" [ref=e77]
+      - button "Toggle Sidebar" [ref=e43]
+    - main [ref=e44]:
+      - main [ref=e45]:
+        - generic [ref=e46]:
+          - generic [ref=e79]:
+            - generic [ref=e81]: I'm a blind student navigating campus independently
+            - generic [ref=e83]: As a blind student, I'll highlight essential navigation points like stairs, elevators, and accessible routes to help you move safely and independently across campus. I'll also emphasize auditory and tactile features like Braille signage, audio signals, and textured paths to support your navigation. Let's get started!
+          - generic [ref=e55]:
+            - textbox "Describe your role or what you're looking for…" [disabled] [ref=e56]
+            - button "Send" [disabled] [ref=e58]:
+              - img [ref=e59]
+              - generic [ref=e61]: Send
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e68] [cursor=pointer]:
+    - img [ref=e69]
+  - alert [ref=e72]

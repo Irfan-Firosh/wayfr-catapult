@@ -50,6 +50,12 @@ type ResolvedSceneAsset = {
   source: "local" | "remote"
 }
 
+export type PersonaAmbientAnnotation = {
+  objectId: string
+  label: string
+  color: string
+}
+
 export interface HomeSceneViewerProps {
   homeId?: string
   glbUrl: string
@@ -72,6 +78,10 @@ export interface HomeSceneViewerProps {
   debugOptions?: Partial<SceneDebugOptions>
   onVertexCountChange?: (count: number) => void
   showSceneBadge?: boolean
+  /** Maps objectId → display label override (e.g. persona label instead of raw object label) */
+  labelMap?: Record<string, string>
+  /** Ambient persistent callouts shown for selected persona-annotated objects */
+  personaAmbientAnnotations?: PersonaAmbientAnnotation[]
 }
 
 const sceneAssetCache = new Map<string, Promise<ResolvedSceneAsset>>()
@@ -200,6 +210,8 @@ export function HomeSceneViewer({
   debugOptions,
   onVertexCountChange,
   showSceneBadge = true,
+  labelMap,
+  personaAmbientAnnotations,
 }: HomeSceneViewerProps) {
   const mergedDebugOptions = useMemo(() => ({ ...DEFAULT_DEBUG_OPTIONS, ...debugOptions }), [debugOptions])
   const sceneKey = useMemo(
@@ -377,6 +389,8 @@ export function HomeSceneViewer({
           exactHighlight={exactHighlight}
           onPointCount={handlePointCount}
           onGlbError={handleGlbError}
+          labelMap={labelMap}
+          personaAmbientAnnotations={personaAmbientAnnotations}
         />
       ) : null}
 

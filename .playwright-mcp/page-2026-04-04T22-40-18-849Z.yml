@@ -1,0 +1,210 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - link "w" [ref=e8] [cursor=pointer]:
+          - /url: /dashboard
+          - generic [ref=e10]: w
+        - button "Toggle Sidebar" [ref=e12]:
+          - img
+          - generic [ref=e13]: Toggle Sidebar
+      - separator [ref=e14]
+      - list [ref=e16]:
+        - listitem [ref=e17]:
+          - link "Dashboard" [ref=e18] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e19]
+            - generic: Dashboard
+        - listitem [ref=e24]:
+          - link "Personas" [ref=e25] [cursor=pointer]:
+            - /url: /personas
+            - img [ref=e26]
+            - generic: Personas
+        - listitem [ref=e29]:
+          - link "Setup" [ref=e30] [cursor=pointer]:
+            - /url: /setup
+            - img [ref=e31]
+            - generic: Setup
+      - separator [ref=e38]
+      - generic [ref=e40]:
+        - button "Toggle theme" [ref=e41]:
+          - img
+        - button "Open user menu" [ref=e74] [cursor=pointer]:
+          - img "MeoPlayzzz's logo" [ref=e77]
+      - button "Toggle Sidebar" [ref=e43]
+    - main [ref=e44]:
+      - main [ref=e45]:
+        - generic [ref=e46]:
+          - generic [ref=e79]:
+            - generic [ref=e81]: I'm a blind student navigating campus independently
+            - generic [ref=e83]: As a blind student, I'll highlight essential navigation points like stairs, elevators, and accessible routes to help you move safely and independently across campus. I'll also emphasize auditory and tactile features like Braille signage, audio signals, and textured paths to support your navigation. Let's get started!
+            - generic [ref=e85]:
+              - generic [ref=e86]:
+                - img [ref=e88]
+                - generic [ref=e91]:
+                  - paragraph [ref=e92]: Blind Student
+                  - paragraph [ref=e93]: Needs to navigate campus independently and safely using auditory and tactile cues.
+              - generic [ref=e94]:
+                - generic [ref=e95]: Accessible routes
+                - generic [ref=e96]: Tactile markers
+                - generic [ref=e97]: Audio signals
+              - generic [ref=e98]:
+                - generic [ref=e103]: accessibility-first view
+                - generic [ref=e104]:
+                  - img [ref=e105]
+                  - text: 2 new annotation types
+            - generic [ref=e108]:
+              - paragraph [ref=e109]: Choose a space to annotate
+              - generic [ref=e110]:
+                - button "ANSH NEW ROOM 22 objects" [ref=e111]:
+                  - generic [ref=e112]:
+                    - generic [ref=e113]: ANSH NEW ROOM
+                    - img [ref=e114]
+                  - generic [ref=e117]:
+                    - img [ref=e118]
+                    - text: 22 objects
+                - button "Ansh 30 objects" [active] [pressed] [ref=e121]:
+                  - generic [ref=e122]:
+                    - generic [ref=e123]: Ansh
+                    - img [ref=e124]
+                  - generic [ref=e127]:
+                    - img [ref=e128]
+                    - text: 30 objects
+                - button "My Home 0 objects" [disabled] [ref=e131]:
+                  - generic [ref=e132]:
+                    - generic [ref=e133]: My Home
+                    - img [ref=e134]
+                  - generic [ref=e138]:
+                    - img [ref=e139]
+                    - text: 0 objects
+                - button "chuddy 26 objects" [ref=e142]:
+                  - generic [ref=e143]:
+                    - generic [ref=e144]: chuddy
+                    - img [ref=e145]
+                  - generic [ref=e148]:
+                    - img [ref=e149]
+                    - text: 26 objects
+                - button "ansh chyud room v 0 objects" [disabled] [ref=e152]:
+                  - generic [ref=e153]:
+                    - generic [ref=e154]: ansh chyud room v
+                    - img [ref=e155]
+                  - generic [ref=e159]:
+                    - img [ref=e160]
+                    - text: 0 objects
+                - button "My Home 0 objects" [disabled] [ref=e163]:
+                  - generic [ref=e164]:
+                    - generic [ref=e165]: My Home
+                    - img [ref=e166]
+                  - generic [ref=e170]:
+                    - img [ref=e171]
+                    - text: 0 objects
+                - button "My Home 35 objects" [ref=e174]:
+                  - generic [ref=e175]:
+                    - generic [ref=e176]: My Home
+                    - img [ref=e177]
+                  - generic [ref=e180]:
+                    - img [ref=e181]
+                    - text: 35 objects
+                - button "My Home 35 objects" [ref=e184]:
+                  - generic [ref=e185]:
+                    - generic [ref=e186]: My Home
+                    - img [ref=e187]
+                  - generic [ref=e190]:
+                    - img [ref=e191]
+                    - text: 35 objects
+                - button "dorm room 35 objects" [ref=e194]:
+                  - generic [ref=e195]:
+                    - generic [ref=e196]: dorm room
+                    - img [ref=e197]
+                  - generic [ref=e200]:
+                    - img [ref=e201]
+                    - text: 35 objects
+                - button "dorm 0 objects" [disabled] [ref=e204]:
+                  - generic [ref=e205]:
+                    - generic [ref=e206]: dorm
+                    - img [ref=e207]
+                  - generic [ref=e211]:
+                    - img [ref=e212]
+                    - text: 0 objects
+                - button "dorm 0 objects" [disabled] [ref=e215]:
+                  - generic [ref=e216]:
+                    - generic [ref=e217]: dorm
+                    - img [ref=e218]
+                  - generic [ref=e222]:
+                    - img [ref=e223]
+                    - text: 0 objects
+                - button "Dorm room 0 objects" [disabled] [ref=e226]:
+                  - generic [ref=e227]:
+                    - generic [ref=e228]: Dorm room
+                    - img [ref=e229]
+                  - generic [ref=e233]:
+                    - img [ref=e234]
+                    - text: 0 objects
+                - button "ansh g 35 objects" [ref=e237]:
+                  - generic [ref=e238]:
+                    - generic [ref=e239]: ansh g
+                    - img [ref=e240]
+                  - generic [ref=e243]:
+                    - img [ref=e244]
+                    - text: 35 objects
+                - button "amsh room 1 35 objects" [ref=e247]:
+                  - generic [ref=e248]:
+                    - generic [ref=e249]: amsh room 1
+                    - img [ref=e250]
+                  - generic [ref=e253]:
+                    - img [ref=e254]
+                    - text: 35 objects
+                - button "Ansh 33 objects" [ref=e257]:
+                  - generic [ref=e258]:
+                    - generic [ref=e259]: Ansh
+                    - img [ref=e260]
+                  - generic [ref=e263]:
+                    - img [ref=e264]
+                    - text: 33 objects
+                - button "Ansh 0 objects" [disabled] [ref=e267]:
+                  - generic [ref=e268]:
+                    - generic [ref=e269]: Ansh
+                    - img [ref=e270]
+                  - generic [ref=e272]:
+                    - img [ref=e273]
+                    - text: 0 objects
+                - button "My Home 0 objects" [disabled] [ref=e276]:
+                  - generic [ref=e277]:
+                    - generic [ref=e278]: My Home
+                    - img [ref=e279]
+                  - generic [ref=e281]:
+                    - img [ref=e282]
+                    - text: 0 objects
+                - button "Irfan Room 28 objects" [ref=e285]:
+                  - generic [ref=e286]:
+                    - generic [ref=e287]: Irfan Room
+                    - img [ref=e288]
+                  - generic [ref=e291]:
+                    - img [ref=e292]
+                    - text: 28 objects
+                - button "anshs room test 1 35 objects" [ref=e295]:
+                  - generic [ref=e296]:
+                    - generic [ref=e297]: anshs room test 1
+                    - img [ref=e298]
+                  - generic [ref=e301]:
+                    - img [ref=e302]
+                    - text: 35 objects
+                - button "Ansh 33 objects" [ref=e305]:
+                  - generic [ref=e306]:
+                    - generic [ref=e307]: Ansh
+                    - img [ref=e308]
+                  - generic [ref=e311]:
+                    - img [ref=e312]
+                    - text: 33 objects
+            - generic [ref=e317]:
+              - img [ref=e318]
+              - text: Building your personalized view…
+          - generic [ref=e55]:
+            - textbox "Describe your role or what you're looking for…" [disabled] [ref=e320]
+            - button "Send" [disabled] [ref=e58]:
+              - img [ref=e59]
+              - generic [ref=e61]: Send
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e68] [cursor=pointer]:
+    - img [ref=e69]
+  - alert [ref=e72]
