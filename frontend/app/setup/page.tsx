@@ -165,9 +165,12 @@ export default function SetupPage() {
   const isProcessing = mode === "uploading" || mode === "polling"
 
   return (
-    <main className="relative overflow-hidden">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(244,162,35,0.18),transparent_35%),linear-gradient(180deg,rgba(255,250,242,0.96),rgba(255,255,255,1))]" />
-      <div className="absolute inset-x-0 top-0 -z-10 h-[28rem] bg-[radial-gradient(circle_at_20%_20%,rgba(255,214,153,0.45),transparent_32%),radial-gradient(circle_at_80%_10%,rgba(196,122,30,0.14),transparent_28%)]" />
+    <main className="relative overflow-hidden bg-background">
+      {/* Light-mode decorative gradients */}
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(244,162,35,0.18),transparent_35%),linear-gradient(180deg,rgba(255,250,242,0.96),rgba(255,255,255,1))] dark:hidden" />
+      <div className="absolute inset-x-0 top-0 -z-10 h-[28rem] bg-[radial-gradient(circle_at_20%_20%,rgba(255,214,153,0.45),transparent_32%),radial-gradient(circle_at_80%_10%,rgba(196,122,30,0.14),transparent_28%)] dark:hidden" />
+      {/* Dark-mode decorative gradient */}
+      <div className="absolute inset-0 -z-10 hidden dark:block bg-[radial-gradient(circle_at_top,rgba(244,162,35,0.07),transparent_35%)]" />
 
       <section className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-8 px-6 py-8 pb-20">
         <div className="pl-1">
@@ -244,17 +247,17 @@ export default function SetupPage() {
 
                   <button
                     onClick={() => setMode("phone")}
-                    className="group relative overflow-hidden rounded-[1.6rem] border border-mango/20 bg-foreground p-6 text-left text-white shadow-[0_18px_60px_-34px_rgba(17,12,6,0.85)] transition duration-300 hover:-translate-y-0.5 hover:border-mango/40"
+                    className="group relative overflow-hidden rounded-[1.6rem] border border-border/70 bg-[linear-gradient(160deg,rgba(255,250,242,0.96),rgba(255,244,224,0.84))] p-6 text-left shadow-[0_16px_50px_-34px_rgba(196,122,30,0.55)] transition duration-300 hover:-translate-y-0.5 hover:border-mango/35 dark:border-mango/25 dark:bg-zinc-900 dark:[background-image:none] dark:shadow-[0_18px_60px_-34px_rgba(17,12,6,0.85)]"
                   >
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,190,110,0.24),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.02),transparent)]" />
+                    <div className="absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top,rgba(244,162,35,0.2),transparent_70%)]" />
                     <div className="relative flex h-full flex-col gap-12">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-mango-300 backdrop-blur-sm">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-mango-100 text-mango-700 shadow-[0_12px_30px_-18px_rgba(196,122,30,0.7)] dark:bg-white/10 dark:text-mango-300 dark:shadow-none">
                         <Smartphone className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="text-lg font-semibold tracking-[-0.02em]">Phone</p>
-                        <p className="mt-1 text-sm leading-6 text-white/65">Scan QR code</p>
-                        <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-mango-300">
+                        <p className="text-lg font-semibold tracking-[-0.02em] text-foreground">Phone</p>
+                        <p className="mt-1 text-sm leading-6 text-muted-foreground">Scan QR code</p>
+                        <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-mango-700 dark:text-mango-300">
                           Start from mobile
                           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                         </div>
@@ -330,7 +333,7 @@ export default function SetupPage() {
         )}
 
         {isProcessing && (
-          <div className="overflow-hidden rounded-[2rem] border border-mango/20 bg-foreground px-6 py-8 text-center text-white shadow-[0_30px_100px_-50px_rgba(17,12,6,0.9)]">
+          <div className="overflow-hidden rounded-[2rem] border border-mango/20 bg-zinc-950 px-6 py-8 text-center text-white shadow-[0_30px_100px_-50px_rgba(17,12,6,0.9)] dark:bg-zinc-900 dark:border-mango/15">
             <div className="mx-auto flex max-w-xl flex-col items-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-[1.6rem] bg-white/10 backdrop-blur">
                 <Loader2 className="h-8 w-8 animate-spin text-mango-300" />

@@ -111,7 +111,7 @@ export function WorldIDVerifyButton({ onVerified }: WorldIDVerifyButtonProps = {
         onClick={fetchRpSignature}
         disabled={loading}
         size="lg"
-        className="gap-2.5 rounded-xl bg-black text-white border border-white/15 hover:bg-white/10 transition-all h-12 px-6"
+        className="gap-2.5 rounded-xl bg-primary text-primary-foreground border border-primary/20 hover:bg-primary/90 transition-all h-12 px-6"
       >
         {loading ? (
           <Loader2 className="h-4 w-4 animate-spin" />

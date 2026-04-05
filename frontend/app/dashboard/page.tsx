@@ -290,11 +290,11 @@ function FocusedObjectPhotoPanel({
       style={{ left: panelState.left, top: panelState.top }}
     >
       <div
-        className="pointer-events-auto overflow-hidden rounded-[28px] border border-white/10 bg-black/48 backdrop-blur-2xl"
+        className="pointer-events-auto overflow-hidden rounded-[28px] border border-black/10 bg-white/92 backdrop-blur-2xl dark:border-white/10 dark:bg-black/48"
         style={{ width: panelState.width }}
       >
         <div
-          className="flex cursor-move items-center justify-between gap-3 border-b border-white/10 px-4 py-3"
+          className="flex cursor-move items-center justify-between gap-3 border-b border-black/10 px-4 py-3 dark:border-white/10"
           onPointerDown={(event) => {
             if ((event.target as HTMLElement).closest("[data-panel-control='true']")) return
             dragRef.current = {
@@ -309,12 +309,12 @@ function FocusedObjectPhotoPanel({
           }}
         >
           <div className="min-w-0">
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">Focused image</p>
-            <p className="mt-1 truncate text-sm font-medium capitalize text-white">{focusedObject.label}</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-foreground/45">Focused image</p>
+            <p className="mt-1 truncate text-sm font-medium capitalize text-foreground">{focusedObject.label}</p>
           </div>
           <div className="flex items-center gap-2">
             {typeof evidenceFrame.timestampSec === "number" ? (
-              <span className="shrink-0 font-mono text-[11px] text-white/55">{evidenceFrame.timestampSec.toFixed(1)}s</span>
+              <span className="shrink-0 font-mono text-[11px] text-foreground/55">{evidenceFrame.timestampSec.toFixed(1)}s</span>
             ) : null}
             <button
               type="button"
@@ -325,7 +325,7 @@ function FocusedObjectPhotoPanel({
                   collapsed: !current.collapsed,
                 }))
               }
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-black/10 bg-black/5 text-foreground/60 transition-colors hover:bg-black/10 hover:text-foreground dark:border-white/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white"
               aria-label={panelState.collapsed ? "Expand photo panel" : "Collapse photo panel"}
             >
               <Minus className={cn("h-4 w-4 transition-transform", panelState.collapsed && "rotate-180")} />
@@ -336,7 +336,7 @@ function FocusedObjectPhotoPanel({
         {!panelState.collapsed ? (
           <div className="relative">
             <div
-              className="flex items-center justify-center bg-black/38 px-3 py-3"
+              className="flex items-center justify-center bg-black/5 px-3 py-3 dark:bg-black/38"
               style={{ height: panelState.height }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -350,7 +350,7 @@ function FocusedObjectPhotoPanel({
               type="button"
               data-panel-control="true"
               aria-label="Resize photo panel"
-              className="absolute bottom-3 right-3 h-6 w-6 cursor-se-resize rounded-full border border-white/10 bg-black/55 text-white/55 transition-colors hover:bg-white/10 hover:text-white"
+              className="absolute bottom-3 right-3 h-6 w-6 cursor-se-resize rounded-full border border-black/10 bg-black/8 text-foreground/50 transition-colors hover:bg-black/15 hover:text-foreground dark:border-white/10 dark:bg-black/55 dark:text-white/55 dark:hover:bg-white/10 dark:hover:text-white"
               style={{ touchAction: "none" }}
               onPointerDown={(event) => {
                 event.preventDefault()

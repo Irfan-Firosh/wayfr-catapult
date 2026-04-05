@@ -105,18 +105,8 @@ const DEFAULT_DEBUG_OPTIONS: SceneDebugOptions = {
 const Scene = dynamic(() => import("./HomeSceneInner").then((m) => m.HomeSceneInner), {
   ssr: false,
   loading: () => (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        background: "#030408",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 8,
-      }}
-    >
-      <span style={{ fontFamily: "monospace", fontSize: 12, color: "#F5A62360" }}>
+    <div className="flex h-full w-full items-center justify-center rounded-lg bg-card/80">
+      <span className="font-mono text-[12px] text-mango/40">
         Loading 3D scene...
       </span>
     </div>

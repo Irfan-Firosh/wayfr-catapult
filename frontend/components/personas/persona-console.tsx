@@ -24,6 +24,38 @@ import type {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"
 
+function resolveAssetUrl(url: string) {
+  if (/^https?:\/\//i.test(url)) return url
+  return `${API_URL}${url}`
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapObjectItem(o: any): ObjectItem {
+  const ef = o.evidence_frame
+  return {
+    id: o.id,
+    label: o.label,
+    x: o.x,
+    y: o.y,
+    z: o.z,
+    track_id: o.track_id ?? null,
+    bbox_min: o.bbox_min ?? null,
+    bbox_max: o.bbox_max ?? null,
+    confidence: o.confidence ?? null,
+    n_observations: o.n_observations ?? 1,
+    evidenceFrame: ef?.image_url
+      ? {
+          imageUrl: resolveAssetUrl(ef.image_url),
+          sampledFrameIdx: ef.sampled_frame_idx ?? null,
+          sourceFrameIdx: ef.source_frame_idx ?? null,
+          timestampSec: ef.timestamp_sec ?? null,
+          bbox: ef.bbox ?? null,
+          maskQuality: ef.mask_quality ?? null,
+        }
+      : null,
+  }
+}
+
 type Stage =
   | "idle"
   | "detecting"
@@ -415,12 +447,9 @@ export function PersonaConsole() {
         // Fetch scene objects
         const objRes = await fetch(`${API_URL}/api/homes/${homeId}/objects`, { cache: "no-store" })
         if (!objRes.ok) throw new Error(`Failed to load objects (${objRes.status})`)
-        const objData = await objRes.json() as { objects?: ObjectItem[] }
-        const objects: ObjectItem[] = (objData.objects ?? []).map((o) => ({
-          ...o,
-          confidence: o.confidence ?? null,
-          n_observations: o.n_observations ?? 1,
-        }))
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const objData = await objRes.json() as { objects?: any[] }
+        const objects: ObjectItem[] = (objData.objects ?? []).map(mapObjectItem)
         setSceneObjects(objects)
 
         // Call annotation plan
@@ -518,12 +547,9 @@ export function PersonaConsole() {
         cache: "no-store",
       })
       if (!objRes.ok) throw new Error(`Failed to load objects (${objRes.status})`)
-      const objData = (await objRes.json()) as { objects?: ObjectItem[] }
-      const objects: ObjectItem[] = (objData.objects ?? []).map((o) => ({
-        ...o,
-        confidence: o.confidence ?? null,
-        n_observations: o.n_observations ?? 1,
-      }))
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const objData = (await objRes.json()) as { objects?: any[] }
+      const objects: ObjectItem[] = (objData.objects ?? []).map(mapObjectItem)
       setSceneObjects(objects)
       if (session.persona) setCurrentPersona(session.persona)
       setMessages([

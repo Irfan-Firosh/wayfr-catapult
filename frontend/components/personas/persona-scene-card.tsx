@@ -93,6 +93,7 @@ function pluralizeLabel(label: string): string {
 type ClusterResult = {
   annotations: PersonaAnnotation[]
   syntheticObjects: ObjectItem[]
+  clusterMembership: Map<string, ObjectItem[]>
 }
 
 /**
@@ -116,6 +117,7 @@ function clusterAnnotations(
 
   const merged: PersonaAnnotation[] = []
   const syntheticObjects: ObjectItem[] = []
+  const clusterMembership = new Map<string, ObjectItem[]>()
 
   for (const group of byLabel.values()) {
     if (group.length === 1) {
@@ -193,6 +195,7 @@ function clusterAnnotations(
         bbox_max: bboxMax,
       }
       syntheticObjects.push(syntheticObj)
+      clusterMembership.set(syntheticId, cluster.map((c) => c.obj))
 
       merged.push({
         ...best,
@@ -205,7 +208,103 @@ function clusterAnnotations(
   // Re-sort by priority
   merged.sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority])
 
-  return { annotations: merged, syntheticObjects }
+  return { annotations: merged, syntheticObjects, clusterMembership }
+}
+
+// ── Evidence frame panel ──────────────────────────────────────────────────────
+
+function EvidencePanel({
+  annotation,
+  focusedObject,
+  clusterMembers,
+}: {
+  annotation: PersonaAnnotation
+  focusedObject: ObjectItem | null
+  clusterMembers: ObjectItem[] | null
+}) {
+  const isCluster = !!clusterMembers
+  const membersWithImages = clusterMembers?.filter((m) => m.evidenceFrame?.imageUrl) ?? []
+
+  return (
+    <div className="w-80 overflow-hidden rounded-2xl border border-black/10 bg-white/85 shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-black/65">
+      {/* Header */}
+      <div className="px-3 py-2.5" style={{ borderBottom: `1px solid ${annotation.color}30` }}>
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[11px] font-semibold" style={{ color: annotation.color }}>
+            {annotation.personaLabel}
+          </span>
+          <span
+            className="rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase"
+            style={{
+              backgroundColor: `${PRIORITY_COLORS[annotation.priority]}20`,
+              color: PRIORITY_COLORS[annotation.priority],
+            }}
+          >
+            {annotation.priority}
+          </span>
+        </div>
+        {annotation.personaDescription ? (
+          <p className="mt-1 line-clamp-2 text-[10px] leading-relaxed text-foreground/55 dark:text-white/55">
+            {annotation.personaDescription}
+          </p>
+        ) : null}
+      </div>
+
+      {/* Individual object — single evidence image */}
+      {!isCluster && focusedObject?.evidenceFrame?.imageUrl ? (
+        <div>
+          <div className="bg-black/5 px-2 pt-2 dark:bg-black/20">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={focusedObject.evidenceFrame.imageUrl}
+              alt={`${focusedObject.label} detection`}
+              className="aspect-[4/3] w-full rounded-lg object-contain"
+            />
+          </div>
+          <div className="flex items-center justify-between px-3 py-1.5 text-[9px] text-foreground/40 dark:text-white/40">
+            <span className="font-mono uppercase tracking-[0.14em]">Object photo</span>
+            {typeof focusedObject.evidenceFrame.timestampSec === "number" ? (
+              <span>{focusedObject.evidenceFrame.timestampSec.toFixed(1)}s</span>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Individual object — no image */}
+      {!isCluster && !focusedObject?.evidenceFrame?.imageUrl ? (
+        <div className="px-3 py-3 text-[10px] text-foreground/35 dark:text-white/35">
+          No detection photo available
+        </div>
+      ) : null}
+
+      {/* Cluster — grid of constituent images */}
+      {isCluster && membersWithImages.length > 0 ? (
+        <div className="grid grid-cols-2 gap-1 p-2">
+          {membersWithImages.map((member) => (
+            <div key={member.id} className="relative overflow-hidden rounded-lg">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={member.evidenceFrame!.imageUrl}
+                alt={member.label}
+                className="aspect-[4/3] w-full object-contain bg-black/5 dark:bg-black/20"
+              />
+              <div className="absolute bottom-0 left-0 right-0 truncate bg-black/50 px-1.5 py-0.5 text-[8px] text-white/85">
+                {member.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {/* Cluster — count footer */}
+      {isCluster ? (
+        <div className="px-3 py-2 text-[9px] text-foreground/35 dark:text-white/35">
+          {clusterMembers!.length} object{clusterMembers!.length !== 1 ? "s" : ""} grouped
+          {membersWithImages.length === 0 ? " · no photos available" : null}
+        </div>
+      ) : null}
+    </div>
+  )
 }
 
 // ── Annotation picker row ─────────────────────────────────────────────────────
@@ -404,7 +503,7 @@ export function PersonaSceneCard({ homeId, homeName, plan, objects }: PersonaSce
   )
 
   // Cluster nearby same-label annotations → merged list + synthetic centroid objects
-  const { annotations: mergedAnnotations, syntheticObjects } = useMemo(() => {
+  const { annotations: mergedAnnotations, syntheticObjects, clusterMembership } = useMemo(() => {
     const diameter = sceneDiameter(objects)
     const threshold = diameter * 0.14
     return clusterAnnotations(priorityAnnotations, baseObjectMap, threshold)
@@ -422,6 +521,22 @@ export function PersonaSceneCard({ homeId, homeName, plan, objects }: PersonaSce
     for (const obj of viewerObjects) map.set(obj.id, obj)
     return map
   }, [viewerObjects])
+
+  // Focused object + annotation for evidence panel
+  const focusedObject = useMemo(
+    () => (focusedObjectId ? (objectMap.get(focusedObjectId) ?? null) : null),
+    [focusedObjectId, objectMap]
+  )
+
+  const focusedAnnotation = useMemo(
+    () => (focusedObjectId ? (mergedAnnotations.find((a) => a.objectId === focusedObjectId) ?? null) : null),
+    [focusedObjectId, mergedAnnotations]
+  )
+
+  const focusedClusterMembers = useMemo(
+    () => (focusedObjectId ? (clusterMembership.get(focusedObjectId) ?? null) : null),
+    [focusedObjectId, clusterMembership]
+  )
 
   // Critical + high objects get selection auras
   const selectedObjectIds = useMemo(
@@ -562,11 +677,19 @@ export function PersonaSceneCard({ homeId, homeName, plan, objects }: PersonaSce
         </div>
       </div>
 
-      {/* ── Bottom-left: plan summary ── */}
-      <div className="pointer-events-none absolute bottom-20 left-4 z-10 max-w-[340px]">
-        <div className="rounded-xl border border-black/8 bg-white/80 px-3 py-1.5 backdrop-blur-xl dark:border-white/8 dark:bg-black/50">
-          <p className="text-[10px] leading-relaxed text-foreground/55 dark:text-white/55">{plan.summary}</p>
-        </div>
+      {/* ── Bottom-left: evidence panel when focused, plan summary otherwise ── */}
+      <div className="pointer-events-none absolute bottom-20 left-4 z-10">
+        {focusedAnnotation ? (
+          <EvidencePanel
+            annotation={focusedAnnotation}
+            focusedObject={focusedObject}
+            clusterMembers={focusedClusterMembers}
+          />
+        ) : (
+          <div className="max-w-[340px] rounded-xl border border-black/8 bg-white/80 px-3 py-1.5 backdrop-blur-xl dark:border-white/8 dark:bg-black/50">
+            <p className="text-[10px] leading-relaxed text-foreground/55 dark:text-white/55">{plan.summary}</p>
+          </div>
+        )}
       </div>
 
       {/* ── Bottom-right: overview button when an object is focused ── */}

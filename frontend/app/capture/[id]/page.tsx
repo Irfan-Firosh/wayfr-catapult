@@ -125,7 +125,7 @@ export default function PhoneCapturePage() {
   }, [])
 
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center px-6 py-10">
+    <main className="flex min-h-dvh flex-col items-center justify-center bg-background px-6 py-10">
       <div className="w-full max-w-sm space-y-6">
         {/* Logo */}
         <div className="text-center">
