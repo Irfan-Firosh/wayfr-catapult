@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="Dashboard preview placeholder">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f1419"/>
+      <stop offset="100%" stop-color="#1a1f26"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.08"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)" rx="24"/>
+  <rect x="48" y="48" width="220" height="904" fill="#12171e" stroke="#2a323c" stroke-width="1" rx="16"/>
+  <rect x="292" y="48" width="1260" height="120" fill="#12171e" stroke="#2a323c" stroke-width="1" rx="16"/>
+  <rect x="292" y="192" width="800" height="760" fill="url(#accent)" stroke="#2a323c" stroke-width="1" rx="16"/>
+  <rect x="1116" y="192" width="436" height="360" fill="#12171e" stroke="#2a323c" stroke-width="1" rx="16"/>
+  <rect x="1116" y="576" width="436" height="376" fill="#12171e" stroke="#2a323c" stroke-width="1" rx="16"/>
+  <g opacity="0.4" stroke="#3d4754" stroke-width="1">
+    <line x1="340" y1="280" x2="1000" y2="280"/>
+    <line x1="340" y1="400" x2="1000" y2="400"/>
+    <line x1="340" y1="520" x2="1000" y2="520"/>
+    <line x1="340" y1="640" x2="1000" y2="640"/>
+    <line x1="340" y1="760" x2="1000" y2="760"/>
+    <line x1="340" y1="880" x2="1000" y2="880"/>
+  </g>
+  <circle cx="140" cy="120" r="28" fill="#2a323c"/>
+  <rect x="96" y="200" width="124" height="12" rx="4" fill="#3d4754"/>
+  <rect x="96" y="228" width="96" height="10" rx="4" fill="#2a323c"/>
+  <rect x="96" y="280" width="124" height="12" rx="4" fill="#3d4754"/>
+  <rect x="96" y="308" width="80" height="10" rx="4" fill="#2a323c"/>
+  <rect x="320" y="72" width="200" height="20" rx="6" fill="#2a323c"/>
+  <rect x="320" y="108" width="420" height="14" rx="4" fill="#1f262e"/>
+</svg>

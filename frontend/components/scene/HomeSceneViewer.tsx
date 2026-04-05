@@ -19,6 +19,14 @@ export type ObjectItem = {
   n_observations: number
   bbox_min?: number[] | null
   bbox_max?: number[] | null
+  evidenceFrame?: {
+    imageUrl: string
+    sampledFrameIdx?: number | null
+    sourceFrameIdx?: number | null
+    timestampSec?: number | null
+    bbox?: number[] | null
+    maskQuality?: number | null
+  } | null
 }
 
 export type SceneDebugOptions = {

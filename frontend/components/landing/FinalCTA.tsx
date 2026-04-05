@@ -47,7 +47,7 @@ export function FinalCTA() {
 
         <BlurFade delay={0.4}>
           <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Link href="/verify">
+            <Link href="/report">
               <InteractiveHoverButton className="bg-mango text-background border-mango/50 font-semibold px-8">
                 Open report
               </InteractiveHoverButton>

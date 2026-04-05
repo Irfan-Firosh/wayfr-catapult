@@ -22,7 +22,7 @@ export default function Home() {
           <nav className="flex items-center gap-6 text-sm text-muted-foreground">
             <Link href="/setup" className="transition-colors hover:text-foreground">Setup</Link>
             <Link href="/dashboard" className="transition-colors hover:text-foreground">Dashboard</Link>
-            <Link href="/verify" className="transition-colors hover:text-foreground">Report</Link>
+            <Link href="/report" className="transition-colors hover:text-foreground">Report</Link>
           </nav>
         </div>
       </footer>

@@ -23,6 +23,16 @@ class HomeMap:
 
 
 @dataclass
+class ObjectEvidenceFrame:
+    image_path: str
+    sampled_frame_idx: int | None = None
+    source_frame_idx: int | None = None
+    timestamp_sec: float | None = None
+    bbox: list[float] | None = None
+    mask_quality: float | None = None
+
+
+@dataclass
 class ObjectPosition:
     id: str
     home_id: str
@@ -35,6 +45,7 @@ class ObjectPosition:
     bbox_max: list[float] | None = None  # [x, y, z]
     confidence: float | None = None
     n_observations: int = 1
+    evidence_frame: ObjectEvidenceFrame | None = None
 
 
 @dataclass

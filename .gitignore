@@ -40,9 +40,11 @@ uploads/
 # Downloaded model weights (e.g. YOLO)
 *.pt
 *.pth
+*.yml
 
 # Playwright MCP
-.cursorignore
+.playwright-mcp/page-2026-04-04T22-37-25-207Z.yml
+
 
 # Screenshots and images
 *.png

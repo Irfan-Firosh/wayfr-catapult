@@ -16,7 +16,8 @@ import {
 const navLinks = [
   { href: "/setup", label: "Setup" },
   { href: "/dashboard", label: "Dashboard" },
-  { href: "/verify", label: "Report" },
+  { href: "/personas", label: "Persona" },
+  { href: "/marketplace", label: "Marketplace", desktopClassName: "ml-4" },
 ]
 
 export function Navbar() {
@@ -44,7 +45,7 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="relative text-muted-foreground transition-colors hover:text-foreground after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-mango after:transition-all hover:after:w-full"
+                className={`relative text-muted-foreground transition-colors hover:text-foreground after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-mango after:transition-all hover:after:w-full ${link.desktopClassName ?? ""}`}
               >
                 {link.label}
               </Link>
@@ -66,14 +67,6 @@ export function Navbar() {
 
             {isSignedIn ? (
               <>
-                <Link href="/verify" className="hidden sm:block">
-                  <Button
-                    size="sm"
-                    className="bg-mango text-background hover:bg-mango/90 font-medium rounded-full px-5"
-                  >
-                    Report
-                  </Button>
-                </Link>
                 <UserButton />
               </>
             ) : (
@@ -121,11 +114,9 @@ export function Navbar() {
                     </Link>
                   ))}
                   {isSignedIn ? (
-                    <Link href="/verify" onClick={() => setOpen(false)}>
-                      <Button className="mt-4 w-full rounded-full bg-mango text-background hover:bg-mango/90">
-                        Open report
-                      </Button>
-                    </Link>
+                    <div className="mt-4">
+                      <UserButton />
+                    </div>
                   ) : (
                     <>
                       <SignInButton mode="redirect">

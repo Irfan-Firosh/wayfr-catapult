@@ -5,7 +5,7 @@ from typing import Any
 
 from core.logging import get_logger
 from db.client import get_supabase
-from models.home import HomeMap, HomeMapStatus, ObjectPosition
+from models.home import HomeMap, HomeMapStatus, ObjectEvidenceFrame, ObjectPosition
 
 logger = get_logger(__name__)
 
@@ -23,6 +23,18 @@ def _row_to_home(row: dict[str, Any]) -> HomeMap:
 
 
 def _row_to_object(row: dict[str, Any]) -> ObjectPosition:
+    evidence_path = row.get("evidence_image_path")
+    evidence_frame = None
+    if evidence_path:
+        evidence_frame = ObjectEvidenceFrame(
+            image_path=str(evidence_path),
+            sampled_frame_idx=row.get("evidence_sampled_frame_idx"),
+            source_frame_idx=row.get("evidence_source_frame_idx"),
+            timestamp_sec=row.get("evidence_timestamp_sec"),
+            bbox=row.get("evidence_bbox"),
+            mask_quality=row.get("evidence_mask_quality"),
+        )
+
     return ObjectPosition(
         id=row["id"],
         home_id=row["home_id"],
@@ -35,6 +47,7 @@ def _row_to_object(row: dict[str, Any]) -> ObjectPosition:
         bbox_max=row.get("bbox_max"),
         confidence=row.get("confidence"),
         n_observations=row.get("n_observations", 1),
+        evidence_frame=evidence_frame,
     )
 
 
@@ -106,6 +119,12 @@ async def upsert_objects(home_id: str, objects: list[ObjectPosition]) -> None:
             "bbox_max": obj.bbox_max,
             "confidence": obj.confidence,
             "n_observations": obj.n_observations,
+            "evidence_image_path": obj.evidence_frame.image_path if obj.evidence_frame else None,
+            "evidence_sampled_frame_idx": obj.evidence_frame.sampled_frame_idx if obj.evidence_frame else None,
+            "evidence_source_frame_idx": obj.evidence_frame.source_frame_idx if obj.evidence_frame else None,
+            "evidence_timestamp_sec": obj.evidence_frame.timestamp_sec if obj.evidence_frame else None,
+            "evidence_bbox": obj.evidence_frame.bbox if obj.evidence_frame else None,
+            "evidence_mask_quality": obj.evidence_frame.mask_quality if obj.evidence_frame else None,
         }
         for obj in objects
     ]
@@ -124,3 +143,20 @@ async def get_objects(home_id: str) -> list[ObjectPosition]:
         .execute()
     )
     return [_row_to_object(r) for r in (result.data or [])]
+
+
+async def get_object_by_track(home_id: str, track_id: int) -> ObjectPosition | None:
+    client = get_supabase()
+    if client is None:
+        return None
+    result = (
+        client.table("object_positions")
+        .select("*")
+        .eq("home_id", home_id)
+        .eq("track_id", track_id)
+        .maybe_single()
+        .execute()
+    )
+    if result.data:
+        return _row_to_object(result.data)
+    return None

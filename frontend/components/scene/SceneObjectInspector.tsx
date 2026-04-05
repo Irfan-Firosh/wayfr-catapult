@@ -34,6 +34,7 @@ export function SceneObjectInspector({
 }: SceneObjectInspectorProps) {
   const multipleSelected = selectedObjects.length > 1
   const focusedPinned = focusedObject ? pinnedObjectIds.includes(focusedObject.id) : false
+  const evidenceFrame = focusedObject?.evidenceFrame ?? null
 
   return (
     <Card
@@ -54,6 +55,29 @@ export function SceneObjectInspector({
       <CardContent className="space-y-4">
         {focusedObject ? (
           <>
+            <div className="overflow-hidden rounded-3xl border border-border/60 bg-background/38 sm:hidden">
+              {evidenceFrame?.imageUrl ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={evidenceFrame.imageUrl}
+                    alt={`${focusedObject.label} detection frame`}
+                    className="aspect-video w-full object-cover"
+                  />
+                  <div className="flex items-center justify-between gap-3 border-t border-border/60 bg-background/55 px-4 py-3 text-xs text-muted-foreground">
+                    <span className="font-mono uppercase tracking-[0.16em] text-mango/80">Object photo</span>
+                    {typeof evidenceFrame.timestampSec === "number" ? (
+                      <span>{evidenceFrame.timestampSec.toFixed(1)}s</span>
+                    ) : null}
+                  </div>
+                </>
+              ) : (
+                <div className="flex aspect-video items-center justify-center px-5 text-center text-sm text-muted-foreground">
+                  No saved detection photo for this object yet.
+                </div>
+              )}
+            </div>
+
             <div className="rounded-3xl border border-mango/20 bg-mango/8 p-4 pb-5">
               <div className="flex items-start justify-between gap-3">
                 <div>

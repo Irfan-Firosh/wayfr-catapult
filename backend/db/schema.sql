@@ -109,8 +109,21 @@ CREATE TABLE IF NOT EXISTS object_positions (
     bbox_min       DOUBLE PRECISION[3],
     bbox_max       DOUBLE PRECISION[3],
     confidence     DOUBLE PRECISION,
-    n_observations INTEGER NOT NULL DEFAULT 1
+    n_observations INTEGER NOT NULL DEFAULT 1,
+    evidence_image_path TEXT,
+    evidence_sampled_frame_idx INTEGER,
+    evidence_source_frame_idx INTEGER,
+    evidence_timestamp_sec DOUBLE PRECISION,
+    evidence_bbox DOUBLE PRECISION[4],
+    evidence_mask_quality DOUBLE PRECISION
 );
+
+ALTER TABLE object_positions ADD COLUMN IF NOT EXISTS evidence_image_path TEXT;
+ALTER TABLE object_positions ADD COLUMN IF NOT EXISTS evidence_sampled_frame_idx INTEGER;
+ALTER TABLE object_positions ADD COLUMN IF NOT EXISTS evidence_source_frame_idx INTEGER;
+ALTER TABLE object_positions ADD COLUMN IF NOT EXISTS evidence_timestamp_sec DOUBLE PRECISION;
+ALTER TABLE object_positions ADD COLUMN IF NOT EXISTS evidence_bbox DOUBLE PRECISION[4];
+ALTER TABLE object_positions ADD COLUMN IF NOT EXISTS evidence_mask_quality DOUBLE PRECISION;
 
 CREATE INDEX IF NOT EXISTS object_positions_home_id_idx ON object_positions (home_id);
 CREATE INDEX IF NOT EXISTS object_positions_label_idx   ON object_positions (label);
@@ -121,7 +134,8 @@ CREATE POLICY "object_positions_all_service" ON object_positions FOR ALL TO serv
 -- ── Storage buckets (for GLB scenes and HLoc references) ────────────────
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('home-scenes', 'home-scenes', false),
-       ('home-references', 'home-references', false)
+       ('home-references', 'home-references', false),
+       ('home-object-evidence', 'home-object-evidence', false)
 ON CONFLICT (id) DO NOTHING;
 
 DO $$
@@ -146,6 +160,17 @@ BEGIN
     CREATE POLICY "service_role_all_home_references"
       ON storage.objects FOR ALL TO service_role
       USING (bucket_id = 'home-references');
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE policyname = 'service_role_all_home_object_evidence'
+      AND tablename  = 'objects'
+      AND schemaname = 'storage'
+  ) THEN
+    CREATE POLICY "service_role_all_home_object_evidence"
+      ON storage.objects FOR ALL TO service_role
+      USING (bucket_id = 'home-object-evidence');
   END IF;
 END
 $$;

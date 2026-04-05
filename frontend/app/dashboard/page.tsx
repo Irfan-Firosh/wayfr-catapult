@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
   ArrowRight,
   ChevronDown,
@@ -9,6 +9,7 @@ import {
   ChevronRight,
   FolderClock,
   Loader2,
+  Minus,
   Plus,
   RefreshCw,
   Search,
@@ -72,7 +73,22 @@ type ObjectsResponse = {
     bbox_max?: number[] | null
     confidence?: number | null
     n_observations?: number
+    evidence_frame?: {
+      image_url?: string | null
+      sampled_frame_idx?: number | null
+      source_frame_idx?: number | null
+      timestamp_sec?: number | null
+      bbox?: number[] | null
+      mask_quality?: number | null
+    } | null
   }>
+}
+
+function resolveBackendAssetUrl(url: string) {
+  if (/^https?:\/\//i.test(url)) {
+    return url
+  }
+  return `${API_URL}${url}`
 }
 
 function parseTimestamp(value: unknown) {
@@ -194,6 +210,170 @@ function StageStateCard({
   )
 }
 
+function FocusedObjectPhotoPanel({
+  focusedObject,
+}: {
+  focusedObject: ObjectItem | null
+}) {
+  const evidenceFrame = focusedObject?.evidenceFrame ?? null
+  const [panelState, setPanelState] = useState({
+    left: 20,
+    top: 96,
+    width: 380,
+    height: 520,
+    collapsed: false,
+  })
+  const dragRef = useRef<{
+    kind: "move" | "resize"
+    startX: number
+    startY: number
+    left: number
+    top: number
+    width: number
+    height: number
+  } | null>(null)
+
+  useEffect(() => {
+    const onPointerMove = (event: PointerEvent) => {
+      const drag = dragRef.current
+      if (!drag) return
+
+      if (drag.kind === "move") {
+        const nextLeft = Math.min(
+          Math.max(12, drag.left + (event.clientX - drag.startX)),
+          Math.max(12, window.innerWidth - panelState.width - 12)
+        )
+        const nextTop = Math.min(
+          Math.max(84, drag.top + (event.clientY - drag.startY)),
+          Math.max(84, window.innerHeight - (panelState.collapsed ? 76 : panelState.height) - 12)
+        )
+        setPanelState((current) => ({
+          ...current,
+          left: nextLeft,
+          top: nextTop,
+        }))
+        return
+      }
+
+      const nextWidth = Math.min(
+        Math.max(300, drag.width + (event.clientX - drag.startX)),
+        Math.max(300, window.innerWidth - drag.left - 12)
+      )
+      const nextHeight = Math.min(
+        Math.max(360, drag.height + (event.clientY - drag.startY)),
+        Math.max(360, window.innerHeight - drag.top - 12)
+      )
+      setPanelState((current) => ({
+        ...current,
+        width: nextWidth,
+        height: nextHeight,
+      }))
+    }
+
+    const onPointerUp = () => {
+      dragRef.current = null
+    }
+
+    window.addEventListener("pointermove", onPointerMove)
+    window.addEventListener("pointerup", onPointerUp)
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove)
+      window.removeEventListener("pointerup", onPointerUp)
+    }
+  }, [panelState.collapsed, panelState.height, panelState.width])
+
+  if (!focusedObject || !evidenceFrame?.imageUrl) return null
+
+  return (
+    <div
+      className="pointer-events-none absolute z-40 hidden sm:block"
+      style={{ left: panelState.left, top: panelState.top }}
+    >
+      <div
+        className="pointer-events-auto overflow-hidden rounded-[28px] border border-white/10 bg-black/48 backdrop-blur-2xl"
+        style={{ width: panelState.width }}
+      >
+        <div
+          className="flex cursor-move items-center justify-between gap-3 border-b border-white/10 px-4 py-3"
+          onPointerDown={(event) => {
+            if ((event.target as HTMLElement).closest("[data-panel-control='true']")) return
+            dragRef.current = {
+              kind: "move",
+              startX: event.clientX,
+              startY: event.clientY,
+              left: panelState.left,
+              top: panelState.top,
+              width: panelState.width,
+              height: panelState.height,
+            }
+          }}
+        >
+          <div className="min-w-0">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">Focused image</p>
+            <p className="mt-1 truncate text-sm font-medium capitalize text-white">{focusedObject.label}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            {typeof evidenceFrame.timestampSec === "number" ? (
+              <span className="shrink-0 font-mono text-[11px] text-white/55">{evidenceFrame.timestampSec.toFixed(1)}s</span>
+            ) : null}
+            <button
+              type="button"
+              data-panel-control="true"
+              onClick={() =>
+                setPanelState((current) => ({
+                  ...current,
+                  collapsed: !current.collapsed,
+                }))
+              }
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+              aria-label={panelState.collapsed ? "Expand photo panel" : "Collapse photo panel"}
+            >
+              <Minus className={cn("h-4 w-4 transition-transform", panelState.collapsed && "rotate-180")} />
+            </button>
+          </div>
+        </div>
+
+        {!panelState.collapsed ? (
+          <div className="relative">
+            <div
+              className="flex items-center justify-center bg-black/38 px-3 py-3"
+              style={{ height: panelState.height }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={evidenceFrame.imageUrl}
+                alt={`${focusedObject.label} detection frame`}
+                className="max-h-full w-full rounded-[22px] object-contain"
+              />
+            </div>
+            <button
+              type="button"
+              data-panel-control="true"
+              aria-label="Resize photo panel"
+              className="absolute bottom-3 right-3 h-6 w-6 cursor-se-resize rounded-full border border-white/10 bg-black/55 text-white/55 transition-colors hover:bg-white/10 hover:text-white"
+              style={{ touchAction: "none" }}
+              onPointerDown={(event) => {
+                event.preventDefault()
+                dragRef.current = {
+                  kind: "resize",
+                  startX: event.clientX,
+                  startY: event.clientY,
+                  left: panelState.left,
+                  top: panelState.top,
+                  width: panelState.width,
+                  height: panelState.height,
+                }
+              }}
+            >
+              <span className="block translate-x-[3px] translate-y-[-1px] text-xs">+</span>
+            </button>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  )
+}
+
 export default function DashboardPage() {
   const [homes, setHomes] = useState<HomeSummary[]>([])
   const [requestedHomeId, setRequestedHomeId] = useState("")
@@ -302,6 +482,16 @@ export default function DashboardPage() {
           bbox_max: object.bbox_max ?? null,
           confidence: object.confidence ?? null,
           n_observations: object.n_observations ?? 1,
+          evidenceFrame: object.evidence_frame?.image_url
+            ? {
+                imageUrl: resolveBackendAssetUrl(object.evidence_frame.image_url),
+                sampledFrameIdx: object.evidence_frame.sampled_frame_idx ?? null,
+                sourceFrameIdx: object.evidence_frame.source_frame_idx ?? null,
+                timestampSec: object.evidence_frame.timestamp_sec ?? null,
+                bbox: object.evidence_frame.bbox ?? null,
+                maskQuality: object.evidence_frame.mask_quality ?? null,
+              }
+            : null,
         }))
       )
     } catch (error: unknown) {
@@ -600,6 +790,8 @@ export default function DashboardPage() {
       ) : (
         <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top,rgba(88,196,255,0.1),transparent_28%),radial-gradient(circle_at_bottom,rgba(245,166,35,0.1),transparent_24%),linear-gradient(180deg,#f0ece3_0%,#e8e4db_100%)] dark:bg-[radial-gradient(circle_at_top,rgba(88,196,255,0.1),transparent_28%),radial-gradient(circle_at_bottom,rgba(245,166,35,0.1),transparent_24%),linear-gradient(180deg,#030507_0%,#06090d_100%)]" />
       )}
+
+      <FocusedObjectPhotoPanel focusedObject={focusedObject} />
 
       <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_top,rgba(88,196,255,0.08),transparent_28%),radial-gradient(circle_at_bottom,rgba(245,166,35,0.08),transparent_22%)]" />
 
