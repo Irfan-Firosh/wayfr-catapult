@@ -151,7 +151,8 @@ export async function POST(
     .update(updates as never)
     .eq("id", contractId)
 
-  const { data: currentProfile } = await supabase
+  // Credit consumer balance
+  const { data: consumerProfile } = await supabase
     .from("profiles")
     .select("balance_cents")
     .eq("id", profile.id)
@@ -160,7 +161,7 @@ export async function POST(
   await supabase
     .from("profiles")
     .update({
-      balance_cents: (currentProfile?.balance_cents ?? 0) + payoutCents,
+      balance_cents: (consumerProfile?.balance_cents ?? 0) + payoutCents,
       updated_at: new Date().toISOString(),
     } as never)
     .eq("id", profile.id)
@@ -171,6 +172,29 @@ export async function POST(
     amount_cents: payoutCents,
     reference_id: submissionId,
     description: `Payout for contract: ${contract.title}`,
+  } as never)
+
+  // Debit business balance
+  const { data: businessProfile } = await supabase
+    .from("profiles")
+    .select("balance_cents")
+    .eq("id", contract.business_id)
+    .single<{ balance_cents: number }>()
+
+  await supabase
+    .from("profiles")
+    .update({
+      balance_cents: (businessProfile?.balance_cents ?? 0) - priceCents,
+      updated_at: new Date().toISOString(),
+    } as never)
+    .eq("id", contract.business_id)
+
+  await supabase.from("transactions").insert({
+    profile_id: contract.business_id,
+    type: "escrow_lock",
+    amount_cents: -priceCents,
+    reference_id: submissionId,
+    description: `Payment for recording: ${contract.title}`,
   } as never)
 
   return NextResponse.json(

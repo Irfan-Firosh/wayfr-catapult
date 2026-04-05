@@ -13,8 +13,10 @@ interface Transaction {
   created_at: string
 }
 
-function formatCents(cents: number) {
-  return `$${(Math.abs(cents) / 100).toFixed(2)}`
+function formatCents(cents: number, absolute = false) {
+  const value = absolute ? Math.abs(cents) : cents
+  const prefix = value < 0 ? "-$" : "$"
+  return `${prefix}${(Math.abs(value) / 100).toFixed(2)}`
 }
 
 export function BalanceCard({ role }: { role: "business" | "consumer" }) {
@@ -93,7 +95,7 @@ export function BalanceCard({ role }: { role: "business" | "consumer" }) {
                 )}
               >
                 {tx.amount_cents >= 0 ? "+" : "-"}
-                {formatCents(tx.amount_cents)}
+                {formatCents(tx.amount_cents, true)}
               </p>
             </div>
           ))}
