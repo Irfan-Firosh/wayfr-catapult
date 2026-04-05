@@ -29,7 +29,7 @@ export type SceneDebugOptions = {
 }
 
 export type SceneDisplayMode = "normal" | "ghost" | "isolate"
-export type SceneColorMode = "natural" | "class" | "instance" | "confidence" | "support"
+export type SceneColorMode = "natural" | "class" | "instance"
 export type CameraPreset = "overview" | "top" | "reset" | "focus"
 
 export type CameraCommand = {
@@ -59,7 +59,7 @@ export interface HomeSceneViewerProps {
   path?: { x: number; z: number }[]
   currentStepIndex?: number
   targetLabel?: string
-  height?: number
+  height?: number | string
   className?: string
   focusedObjectId?: string | null
   selectedObjectIds?: string[]
@@ -70,6 +70,8 @@ export interface HomeSceneViewerProps {
   onObjectActivate?: (objectId: string, options?: { additive?: boolean }) => void
   onObjectHover?: (objectId: string | null) => void
   debugOptions?: Partial<SceneDebugOptions>
+  onVertexCountChange?: (count: number) => void
+  showSceneBadge?: boolean
 }
 
 const sceneAssetCache = new Map<string, Promise<ResolvedSceneAsset>>()
@@ -196,6 +198,8 @@ export function HomeSceneViewer({
   onObjectActivate,
   onObjectHover,
   debugOptions,
+  onVertexCountChange,
+  showSceneBadge = true,
 }: HomeSceneViewerProps) {
   const mergedDebugOptions = useMemo(() => ({ ...DEFAULT_DEBUG_OPTIONS, ...debugOptions }), [debugOptions])
   const sceneKey = useMemo(
@@ -339,6 +343,10 @@ export function HomeSceneViewer({
     }
   }, [focusedObject?.id, focusedObject?.label, focusedObject?.track_id, homeId, mergedDebugOptions.showExactPoints, mode, sceneKey])
 
+  useEffect(() => {
+    onVertexCountChange?.(vertexCount)
+  }, [onVertexCountChange, vertexCount])
+
   const exactHighlight =
     exactHighlightState.key === (homeId && focusedObject?.track_id != null ? `${sceneKey}:${focusedObject.track_id}` : "")
       ? exactHighlightState.data
@@ -372,16 +380,14 @@ export function HomeSceneViewer({
         />
       ) : null}
 
-      <div className="pointer-events-none absolute bottom-3 left-3 z-20 rounded-full border border-white/10 bg-black/45 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-white/72 backdrop-blur-xl">
-        {vertexCount > 0 ? `${vertexCount.toLocaleString()} verts` : glbFailed ? "scene unavailable" : "loading room mesh"}
-        {" · "}
-        {objects.length} visible
-        {" · "}
-        {displayMode}
-        {" · "}
-        {colorMode}
-        {navActive ? " · navigation" : " · explore"}
-      </div>
+      {showSceneBadge ? (
+        <div className="pointer-events-none absolute bottom-3 left-3 z-20 rounded-full border border-white/10 bg-black/45 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-white/72 backdrop-blur-xl">
+          {vertexCount > 0 ? `${vertexCount.toLocaleString()} verts` : glbFailed ? "scene unavailable" : "loading room mesh"}
+          {" · "}
+          {objects.length} visible
+          {navActive ? " · navigation" : " · explore"}
+        </div>
+      ) : null}
     </div>
   )
 }

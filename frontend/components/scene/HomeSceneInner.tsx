@@ -138,14 +138,6 @@ function getObjectColor(object: ObjectItem, index: number, colorMode: SceneColor
   if (colorMode === "instance") {
     return makeColorFromHsl(((index * 41) % 360) / 360, 0.75, 0.56)
   }
-  if (colorMode === "confidence") {
-    const score = clamp(object.confidence ?? 0.35, 0, 1)
-    return makeColorFromHsl(score * 0.33, 0.74, 0.54)
-  }
-  if (colorMode === "support") {
-    const support = clamp(object.n_observations / 24, 0, 1)
-    return makeColorFromHsl(0.58 - support * 0.33, 0.72, 0.56)
-  }
   return 0xcbd5e1
 }
 
@@ -186,8 +178,6 @@ function FocusCallout({
         }}
       >
         <span style={{ fontWeight: 700 }}>{obj.label}</span>
-        {obj.confidence != null ? <span style={{ opacity: 0.7 }}>{Math.round(obj.confidence * 100)}%</span> : null}
-        <span style={{ opacity: 0.55 }}>{obj.n_observations} frames</span>
       </div>
     </Html>
   )
@@ -336,11 +326,15 @@ function ExploreCamera({
   cameraCommand: CameraCommand | null
 }) {
   const controlsRef = useRef<OrbitControlsImpl | null>(null)
-  const idleTimer = useRef(0)
-  const interacting = useRef(false)
   const desiredTarget = useRef(new THREE.Vector3(0, 0.5, 3))
   const desiredPosition = useRef(new THREE.Vector3(-2.4, 3.2, -2.8))
   const appliedCommand = useRef<string>("")
+  const hasBootstrapped = useRef(false)
+  const animationProgress = useRef(1)
+  const animationFromPosition = useRef(new THREE.Vector3())
+  const animationToPosition = useRef(new THREE.Vector3())
+  const animationFromTarget = useRef(new THREE.Vector3())
+  const animationToTarget = useRef(new THREE.Vector3())
   const { camera } = useThree()
 
   const overview = useMemo(() => {
@@ -396,17 +390,22 @@ function ExploreCamera({
     [focusedObject, overview.distance, overview.target]
   )
 
+  const startCameraAnimation = useCallback(() => {
+    if (!controlsRef.current) return
+    animationFromPosition.current.copy(camera.position)
+    animationToPosition.current.copy(desiredPosition.current)
+    animationFromTarget.current.copy(controlsRef.current.target)
+    animationToTarget.current.copy(desiredTarget.current)
+    animationProgress.current = 0
+  }, [camera.position])
+
   useEffect(() => {
+    if (hasBootstrapped.current) return
+    hasBootstrapped.current = true
     applyPreset("reset")
     camera.position.copy(desiredPosition.current)
     camera.lookAt(desiredTarget.current)
   }, [applyPreset, camera])
-
-  useEffect(() => {
-    if (focusedObject) {
-      applyPreset("focus")
-    }
-  }, [applyPreset, focusedObject])
 
   useEffect(() => {
     if (!cameraCommand) return
@@ -414,23 +413,18 @@ function ExploreCamera({
     if (appliedCommand.current === commandKey) return
     appliedCommand.current = commandKey
     applyPreset(cameraCommand.preset)
-  }, [applyPreset, cameraCommand])
+    startCameraAnimation()
+  }, [applyPreset, cameraCommand, startCameraAnimation])
 
   useFrame((_, delta) => {
     if (!controlsRef.current) return
-
-    camera.position.lerp(desiredPosition.current, 1 - Math.exp(-delta * 4.6))
-    controlsRef.current.target.lerp(desiredTarget.current, 1 - Math.exp(-delta * 5.2))
-    controlsRef.current.update()
-
-    if (interacting.current) {
-      idleTimer.current = 0
-      controlsRef.current.autoRotate = false
-    } else {
-      idleTimer.current += delta
-      controlsRef.current.autoRotate = !!focusedObject && idleTimer.current > 3
-      controlsRef.current.autoRotateSpeed = 0.42
+    if (animationProgress.current < 1) {
+      animationProgress.current = Math.min(1, animationProgress.current + delta * 2.2)
+      const eased = 1 - Math.pow(1 - animationProgress.current, 3)
+      camera.position.lerpVectors(animationFromPosition.current, animationToPosition.current, eased)
+      controlsRef.current.target.lerpVectors(animationFromTarget.current, animationToTarget.current, eased)
     }
+    controlsRef.current.update()
   })
 
   return (
@@ -438,16 +432,11 @@ function ExploreCamera({
       ref={controlsRef}
       enableDamping
       dampingFactor={0.06}
-      minPolarAngle={Math.PI * 0.04}
-      maxPolarAngle={Math.PI * 0.49}
+      minPolarAngle={0.001}
+      maxPolarAngle={Math.PI - 0.001}
       minDistance={1.4}
       maxDistance={Math.max(overview.distance * 3.4, 8)}
-      onStart={() => {
-        interacting.current = true
-      }}
-      onEnd={() => {
-        interacting.current = false
-      }}
+      autoRotate={false}
     />
   )
 }

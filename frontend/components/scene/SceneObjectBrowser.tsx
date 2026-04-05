@@ -31,11 +31,8 @@ interface SceneObjectBrowserProps {
   onHideObject: (objectId: string) => void
   onToggleLabelVisibility: (label: string) => void
   onResetVisibility: () => void
-}
-
-function formatConfidence(confidence: number | null) {
-  if (confidence == null) return "n/a"
-  return `${Math.round(confidence * 100)}%`
+  className?: string
+  listClassName?: string
 }
 
 export function SceneObjectBrowser({
@@ -54,6 +51,8 @@ export function SceneObjectBrowser({
   onHideObject,
   onToggleLabelVisibility,
   onResetVisibility,
+  className,
+  listClassName,
 }: SceneObjectBrowserProps) {
   const grouped = objects.reduce<Map<string, ObjectItem[]>>((map, object) => {
     const key = object.label.trim().toLowerCase()
@@ -83,7 +82,7 @@ export function SceneObjectBrowser({
   const hiddenCount = hiddenLabels.length + hiddenObjectIds.length
 
   return (
-    <Card className="border-border/60 bg-card/58 shadow-none backdrop-blur-2xl">
+    <Card className={cn("border-border/60 bg-card/58 shadow-none backdrop-blur-2xl", className)}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -121,7 +120,7 @@ export function SceneObjectBrowser({
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <div className="max-h-[760px] space-y-3 overflow-y-auto pr-1">
+        <div className={cn("max-h-[760px] space-y-3 overflow-y-auto pr-1", listClassName)}>
           {groupedLabels.length > 0 ? (
             groupedLabels.map((group) => {
               const classSelected = group.objects.some((object) => selectedObjectIds.includes(object.id))
@@ -164,16 +163,12 @@ export function SceneObjectBrowser({
                       const isPinned = pinnedObjectIds.includes(object.id)
 
                       return (
-                        <button
+                        <div
                           key={object.id}
-                          type="button"
-                          onClick={(event: MouseEvent<HTMLButtonElement>) => onSelectObject(object.id, event.shiftKey)}
                           onMouseEnter={() => onHoverObject?.(object.id)}
                           onMouseLeave={() => onHoverObject?.(null)}
-                          onFocus={() => onHoverObject?.(object.id)}
-                          onBlur={() => onHoverObject?.(null)}
                           className={cn(
-                            "w-full rounded-2xl border px-3 py-3 text-left transition-colors",
+                            "flex items-start gap-2 rounded-2xl border p-2 transition-colors",
                             isFocused
                               ? "border-mango/45 bg-mango/12"
                               : isSelected
@@ -181,7 +176,13 @@ export function SceneObjectBrowser({
                                 : "border-border/60 bg-background/48 hover:bg-background/60"
                           )}
                         >
-                          <div className="flex items-start justify-between gap-3">
+                          <button
+                            type="button"
+                            onClick={(event: MouseEvent<HTMLButtonElement>) => onSelectObject(object.id, event.shiftKey)}
+                            onFocus={() => onHoverObject?.(object.id)}
+                            onBlur={() => onHoverObject?.(null)}
+                            className="min-w-0 flex-1 rounded-xl px-1 py-1 text-left"
+                          >
                             <div className="min-w-0">
                               <div className="flex items-center gap-2">
                                 <p className="truncate font-medium capitalize text-foreground">{object.label}</p>
@@ -193,38 +194,32 @@ export function SceneObjectBrowser({
                                 {isPinned ? <Sparkles className="h-3.5 w-3.5 text-mango" /> : null}
                               </div>
                               <p className="mt-1 text-xs text-muted-foreground">
-                                {object.n_observations} frames · confidence {formatConfidence(object.confidence)}
+                                {object.n_observations} frames
                               </p>
                             </div>
+                          </button>
 
-                            <div className="flex shrink-0 items-center gap-1">
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className={cn("h-8 w-8 rounded-full", isPinned ? "text-mango" : "text-muted-foreground")}
-                                onClick={(event) => {
-                                  event.stopPropagation()
-                                  onTogglePin(object.id)
-                                }}
-                              >
-                                <Pin className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 rounded-full text-muted-foreground"
-                                onClick={(event) => {
-                                  event.stopPropagation()
-                                  onHideObject(object.id)
-                                }}
-                              >
-                                <EyeOff className="h-4 w-4" />
-                              </Button>
-                            </div>
+                          <div className="flex shrink-0 items-center gap-1 self-center">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className={cn("h-8 w-8 rounded-full", isPinned ? "text-mango" : "text-muted-foreground")}
+                              onClick={() => onTogglePin(object.id)}
+                            >
+                              <Pin className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 rounded-full text-muted-foreground"
+                              onClick={() => onHideObject(object.id)}
+                            >
+                              <EyeOff className="h-4 w-4" />
+                            </Button>
                           </div>
-                        </button>
+                        </div>
                       )
                     })}
                   </div>
