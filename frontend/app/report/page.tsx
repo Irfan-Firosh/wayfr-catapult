@@ -4,7 +4,6 @@ import { useState } from "react"
 import { Navbar } from "@/components/nav/Navbar"
 import { BlurFade } from "@/components/ui/blur-fade"
 import { ShimmerButton } from "@/components/ui/shimmer-button"
-import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -41,12 +40,7 @@ export default function ReportPage() {
 
       <div className="mx-auto max-w-lg px-6 pt-24 pb-16">
         <BlurFade delay={0.1}>
-          <div className="mb-2 flex items-center gap-2">
-            <Badge variant="outline" className="border-green-500/30 bg-green-500/10 text-green-400 text-xs">
-              ✓ Verified Human
-            </Badge>
-            <span className="text-xs text-muted-foreground">3 annotations remaining today</span>
-          </div>
+          <p className="mb-2 text-xs text-muted-foreground">3 annotations remaining today</p>
           <h1 className="text-2xl font-bold">Add a scene annotation</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Repeated annotations at the same location strengthen the shared scene for everyone.
@@ -149,8 +143,7 @@ export default function ReportPage() {
               </ShimmerButton>
 
               <p className="text-center text-xs text-muted-foreground">
-                Your annotation will be attested on World Chain — an immutable record that
-                a verified human updated this scene.
+                Your annotation will be added to the shared scene history for nearby wayfr users.
               </p>
             </form>
           </BlurFade>
@@ -162,9 +155,6 @@ export default function ReportPage() {
               <p className="mt-2 text-sm text-muted-foreground">
                 Confirmed by 2 others at this location. 1 more needed to strengthen the scene.
               </p>
-              <div className="mt-4 rounded-lg border border-border bg-background/30 px-4 py-2 font-mono text-xs text-muted-foreground">
-                on-chain: 0x7f3c...a8d2 · World Chain
-              </div>
               <p className="mt-4 text-xs text-muted-foreground">
                 Active wayfr users within 100m can now see this scene update.
               </p>

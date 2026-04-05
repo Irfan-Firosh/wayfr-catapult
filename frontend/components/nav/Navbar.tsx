@@ -16,7 +16,6 @@ import {
 const navLinks = [
   { href: "/setup", label: "Setup" },
   { href: "/dashboard", label: "Dashboard" },
-  { href: "/verify", label: "Report" },
 ]
 
 export function Navbar() {
@@ -66,14 +65,6 @@ export function Navbar() {
 
             {isSignedIn ? (
               <>
-                <Link href="/verify" className="hidden sm:block">
-                  <Button
-                    size="sm"
-                    className="bg-mango text-background hover:bg-mango/90 font-medium rounded-full px-5"
-                  >
-                    Report
-                  </Button>
-                </Link>
                 <UserButton />
               </>
             ) : (
@@ -121,11 +112,9 @@ export function Navbar() {
                     </Link>
                   ))}
                   {isSignedIn ? (
-                    <Link href="/verify" onClick={() => setOpen(false)}>
-                      <Button className="mt-4 w-full rounded-full bg-mango text-background hover:bg-mango/90">
-                        Open report
-                      </Button>
-                    </Link>
+                    <div className="mt-4">
+                      <UserButton />
+                    </div>
                   ) : (
                     <>
                       <SignInButton mode="redirect">
