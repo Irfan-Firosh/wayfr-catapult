@@ -5,6 +5,7 @@ import { SendHorizontal, Sparkles, Loader2 } from "lucide-react"
 
 import { HistoryPanel } from "@/components/personas/history-panel"
 import type { HistorySession } from "@/components/personas/history-panel"
+import { PersonaEyes } from "@/components/personas/persona-eyes"
 import { HomePicker } from "@/components/personas/home-picker"
 import { PersonaEditor } from "@/components/personas/persona-editor"
 import { PersonaSceneCard } from "@/components/personas/persona-scene-card"
@@ -32,244 +33,6 @@ type Stage =
   | "annotating"
   | "ready"
   | "follow_up"
-
-// ── Persona sigil ─────────────────────────────────────────────────────────────
-
-function PersonaSigil({ small }: { small?: boolean }) {
-  return (
-    <div
-      className={cn(
-        "persona-sigil-shell transition-all duration-500",
-        small && "persona-sigil-shell-sm"
-      )}
-      aria-hidden="true"
-    >
-      <span className="persona-sigil-aura" />
-      <span className="persona-sigil-orbit persona-sigil-orbit-a" />
-      <span className="persona-sigil-orbit persona-sigil-orbit-b" />
-      <span className="persona-sigil-frame" />
-      <span className="persona-sigil-spine" />
-      <span className="persona-sigil-shard persona-sigil-shard-left" />
-      <span className="persona-sigil-shard persona-sigil-shard-right" />
-      <span className="persona-sigil-core">
-        <span className="persona-sigil-core-inner" />
-      </span>
-      <span className="persona-sigil-star persona-sigil-star-top" />
-      <span className="persona-sigil-star persona-sigil-star-mid" />
-      <span className="persona-sigil-star persona-sigil-star-bottom" />
-      <style jsx>{`
-        .persona-sigil-shell {
-          --sigil-size: 172px;
-          position: relative;
-          width: var(--sigil-size);
-          height: var(--sigil-size);
-          flex-shrink: 0;
-        }
-        .persona-sigil-shell-sm {
-          --sigil-size: 72px;
-        }
-        .persona-sigil-aura {
-          position: absolute;
-          inset: 12%;
-          border-radius: 42%;
-          background:
-            radial-gradient(circle at 50% 50%, rgba(245, 166, 35, 0.3), rgba(245, 166, 35, 0.08) 42%, transparent 72%),
-            radial-gradient(circle at 30% 30%, rgba(255, 239, 206, 0.26), transparent 34%);
-          filter: blur(16px);
-          animation: sigilAura 5.6s ease-in-out infinite;
-        }
-        .persona-sigil-orbit {
-          position: absolute;
-          inset: 15%;
-          border-radius: 50%;
-          border: 1px solid rgba(255, 225, 176, 0.16);
-        }
-        .persona-sigil-orbit-a {
-          transform: rotate(22deg) scaleX(0.84);
-          animation: sigilOrbitA 10s linear infinite;
-        }
-        .persona-sigil-orbit-b {
-          inset: 22%;
-          border-color: rgba(245, 166, 35, 0.24);
-          transform: rotate(-34deg) scaleY(0.72);
-          animation: sigilOrbitB 12s linear infinite;
-        }
-        .persona-sigil-frame {
-          position: absolute;
-          inset: 26%;
-          border-radius: 26%;
-          background:
-            linear-gradient(135deg, rgba(255, 244, 219, 0.18), rgba(245, 166, 35, 0.04));
-          border: 1px solid rgba(255, 230, 192, 0.22);
-          box-shadow:
-            inset 0 0 18px rgba(255, 242, 216, 0.08),
-            0 0 24px rgba(245, 166, 35, 0.12);
-          transform: rotate(45deg);
-          animation: sigilFrame 8.6s ease-in-out infinite;
-        }
-        .persona-sigil-spine {
-          position: absolute;
-          top: 16%;
-          bottom: 16%;
-          left: 50%;
-          width: 2px;
-          margin-left: -1px;
-          border-radius: 999px;
-          background:
-            linear-gradient(180deg, transparent, rgba(255, 244, 224, 0.9) 18%, rgba(245, 166, 35, 0.85) 50%, rgba(255, 244, 224, 0.9) 82%, transparent);
-          box-shadow:
-            0 0 16px rgba(245, 166, 35, 0.22),
-            0 0 28px rgba(245, 166, 35, 0.08);
-          animation: sigilSpine 4.8s ease-in-out infinite;
-        }
-        .persona-sigil-shard {
-          position: absolute;
-          top: 50%;
-          width: 18%;
-          height: 28%;
-          margin-top: -14%;
-          border-radius: 18px;
-          background:
-            linear-gradient(180deg, rgba(255, 247, 230, 0.92), rgba(245, 166, 35, 0.72) 58%, rgba(152, 72, 20, 0.76));
-          box-shadow:
-            0 0 18px rgba(245, 166, 35, 0.22),
-            inset 0 0 10px rgba(255, 255, 255, 0.12);
-          opacity: 0.9;
-        }
-        .persona-sigil-shard-left {
-          left: 23%;
-          transform: skewY(18deg) rotate(-18deg);
-          animation: sigilShardLeft 5.2s ease-in-out infinite;
-        }
-        .persona-sigil-shard-right {
-          right: 23%;
-          transform: skewY(-18deg) rotate(18deg);
-          animation: sigilShardRight 5.2s ease-in-out infinite 0.35s;
-        }
-        .persona-sigil-core {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 28%;
-          height: 28%;
-          margin-left: -14%;
-          margin-top: -14%;
-          border-radius: 28%;
-          background:
-            linear-gradient(145deg, rgba(255, 249, 240, 1), rgba(255, 209, 126, 0.96) 42%, rgba(230, 132, 28, 0.9) 72%, rgba(116, 48, 15, 0.86));
-          box-shadow:
-            0 0 24px rgba(245, 166, 35, 0.35),
-            0 18px 38px rgba(0, 0, 0, 0.24);
-          transform: rotate(45deg);
-          animation: sigilCore 4.2s ease-in-out infinite;
-        }
-        .persona-sigil-core-inner {
-          position: absolute;
-          inset: 26%;
-          display: flex;
-          border-radius: 36%;
-          background:
-            radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.98), rgba(255, 239, 203, 0.86) 44%, rgba(255, 210, 128, 0.18));
-          box-shadow:
-            0 0 16px rgba(255, 250, 240, 0.45),
-            inset 0 0 10px rgba(255, 255, 255, 0.18);
-        }
-        .persona-sigil-star {
-          position: absolute;
-          left: 50%;
-          width: 8px;
-          height: 8px;
-          margin-left: -4px;
-          border-radius: 999px;
-          background:
-            radial-gradient(circle, rgba(255, 255, 255, 0.98), rgba(255, 231, 177, 0.84) 48%, rgba(245, 166, 35, 0.25));
-          box-shadow:
-            0 0 16px rgba(255, 242, 210, 0.3),
-            0 0 28px rgba(245, 166, 35, 0.18);
-          animation: sigilStar 3.8s ease-in-out infinite;
-        }
-        .persona-sigil-star-top {
-          top: 19%;
-          animation-delay: 0.1s;
-        }
-        .persona-sigil-star-mid {
-          top: 50%;
-          margin-top: -32%;
-          margin-left: 26%;
-          width: 6px;
-          height: 6px;
-          animation-delay: 0.6s;
-        }
-        .persona-sigil-star-bottom {
-          bottom: 19%;
-          animation-delay: 1.1s;
-        }
-        @keyframes sigilAura {
-          0%, 100% { opacity: 0.74; transform: scale(0.94); }
-          50% { opacity: 1; transform: scale(1.05); }
-        }
-        @keyframes sigilOrbitA {
-          from { transform: rotate(22deg) scaleX(0.84); }
-          to { transform: rotate(382deg) scaleX(0.84); }
-        }
-        @keyframes sigilOrbitB {
-          from { transform: rotate(-34deg) scaleY(0.72); }
-          to { transform: rotate(-394deg) scaleY(0.72); }
-        }
-        @keyframes sigilFrame {
-          0%, 100% { transform: rotate(45deg) scale(0.98); border-radius: 26%; }
-          50% { transform: rotate(45deg) scale(1.03); border-radius: 31%; }
-        }
-        @keyframes sigilSpine {
-          0%, 100% { opacity: 0.84; transform: scaleY(0.94); }
-          50% { opacity: 1; transform: scaleY(1.04); }
-        }
-        @keyframes sigilShardLeft {
-          0%, 100% { transform: translate(-2px, -6px) skewY(18deg) rotate(-18deg); }
-          50% { transform: translate(4px, 6px) skewY(10deg) rotate(-10deg); }
-        }
-        @keyframes sigilShardRight {
-          0%, 100% { transform: translate(2px, 8px) skewY(-18deg) rotate(18deg); }
-          50% { transform: translate(-5px, -5px) skewY(-9deg) rotate(10deg); }
-        }
-        @keyframes sigilCore {
-          0%, 100% { transform: rotate(45deg) scale(0.96); }
-          50% { transform: rotate(45deg) scale(1.08); }
-        }
-        @keyframes sigilStar {
-          0%, 100% { opacity: 0.36; transform: scale(0.9); }
-          50% { opacity: 1; transform: scale(1.15); }
-        }
-        @media (max-width: 640px) {
-          .persona-sigil-shell {
-            --sigil-size: 136px;
-          }
-          .persona-sigil-shell-sm {
-            --sigil-size: 62px;
-          }
-          .persona-sigil-star {
-            width: 6px;
-            height: 6px;
-            margin-left: -3px;
-          }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .persona-sigil-aura,
-          .persona-sigil-orbit-a,
-          .persona-sigil-orbit-b,
-          .persona-sigil-frame,
-          .persona-sigil-spine,
-          .persona-sigil-shard-left,
-          .persona-sigil-shard-right,
-          .persona-sigil-core,
-          .persona-sigil-star {
-            animation: none;
-          }
-        }
-      `}</style>
-    </div>
-  )
-}
 
 // ── Persona badge ─────────────────────────────────────────────────────────────
 
@@ -876,7 +639,7 @@ export function PersonaConsole() {
         isActive ? "h-dvh py-4" : "min-h-screen py-6"
       )}
     >
-      {/* Header: persona sigil */}
+      {/* Header: persona eyes */}
       <div
         className={cn(
           "flex w-full shrink-0 items-center transition-all duration-500",
@@ -888,7 +651,7 @@ export function PersonaConsole() {
             Explore any space, your way
           </p>
         )}
-        <PersonaSigil small={isActive} />
+        <PersonaEyes size={isActive ? 54 : 118} />
       </div>
 
       {/* Message list — scrollable */}
