@@ -551,6 +551,12 @@ def _get_sam2_image_predictor():
 
 
 def _get_sam2_masks(image_np, boxes):
+    """Return masks shaped (N, H, W), one binary mask per box row.
+
+    SAM2ImagePredictor.predict typically returns (N, H, W) for N boxes. Do not
+    prepend a batch dim to 3D output — that breaks zip(dets, masks) and yields
+    non–2D masks that SAM2VideoPredictor.add_new_mask rejects (expects dim==2).
+    """
     import numpy as np
 
     predictor = _get_sam2_image_predictor()
@@ -559,11 +565,36 @@ def _get_sam2_masks(image_np, boxes):
         point_coords=None, point_labels=None, box=boxes, multimask_output=False,
     )
 
-    if masks.ndim == 3:
-        masks = masks[None]
+    masks = np.asarray(masks)
+    if masks.ndim == 2:
+        masks = masks[np.newaxis, ...]
+    elif masks.ndim == 3:
+        # (N, H, W) — keep as one mask per box
+        pass
     elif masks.ndim == 4:
-        masks = masks.squeeze(1)
+        # e.g. (1, N, H, W) or (N, 1, H, W)sdafjas;dljf;as
+        if masks.shape[0] == 1:
+            masks = masks.squeeze(0)
+        elif masks.shape[1] == 1:
+            masks = masks.squeeze(1)
+        else:
+            masks = masks.reshape(-1, masks.shape[-2], masks.shape[-1])
+    else:
+        raise ValueError(f"Unexpected SAM2 mask ndim={masks.ndim}, shape={masks.shape}")
+
     return masks.astype(np.uint8)
+
+
+def _seed_mask_to_2d(mask) -> Any:
+    """Binary mask (H, W) for sam2_video_predictor.add_new_mask."""
+    import numpy as np
+
+    m = np.asarray(mask)
+    while m.ndim > 2:
+        m = m.squeeze(0)
+    if m.ndim != 2:
+        raise ValueError(f"Seed mask must be 2D after squeeze, got shape {np.asarray(mask).shape}")
+    return m
 
 
 # ---------------------------------------------------------------------------
@@ -625,7 +656,7 @@ def _track_video(
             inference_state=inference_state,
             frame_idx=int(seed["frame_idx"]),
             obj_id=object_id,
-            mask=seed["mask"],
+            mask=_seed_mask_to_2d(seed["mask"]),
         )
 
     video_segments: dict[int, dict[int, Any]] = {}

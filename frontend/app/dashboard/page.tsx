@@ -218,7 +218,6 @@ export default function DashboardPage() {
   })
   const [cameraCommandNonce, setCameraCommandNonce] = useState(0)
   const [cameraPreset, setCameraPreset] = useState<CameraPreset>("overview")
-  const [scenePointCount, setScenePointCount] = useState(0)
   const [homesLoading, setHomesLoading] = useState(true)
   const [homeLoading, setHomeLoading] = useState(false)
   const [homesError, setHomesError] = useState<string | null>(null)
@@ -342,7 +341,6 @@ export default function DashboardPage() {
     setSelectedObjectIds([])
     setHoveredObjectId(null)
     setDisplayMode("normal")
-    setScenePointCount(0)
     setViewerDebug({
       showBBoxes: false,
       showCentroids: false,
@@ -428,10 +426,6 @@ export default function DashboardPage() {
     [objectMap, selectedObjectIds]
   )
 
-  const visibleClassCount = useMemo(() => {
-    return new Set(visibleObjects.map((object) => object.label.trim().toLowerCase())).size
-  }, [visibleObjects])
-
   useEffect(() => {
     setSelectedObjectIds((current) => current.filter((id) => objectMap.has(id)))
     setFocusedObjectId((current) => (current && objectMap.has(current) ? current : null))
@@ -501,10 +495,6 @@ export default function DashboardPage() {
     )
   }, [])
 
-  const toggleViewerDebug = useCallback((key: keyof SceneDebugOptions) => {
-    setViewerDebug((current) => ({ ...current, [key]: !current[key] }))
-  }, [])
-
   const resetVisibility = useCallback(() => {
     setHiddenLabels([])
     setHiddenObjectIds([])
@@ -547,18 +537,8 @@ export default function DashboardPage() {
   const showSceneControls = showReadyScene
   const showSideRail = homes.length > 0 && !homesError
 
-  const metrics = [
-    {
-      label: "Points",
-      value: scenePointCount > 0 ? scenePointCount.toLocaleString() : showReadyScene ? "..." : "0",
-    },
-    { label: "Objects", value: visibleObjects.length.toString() },
-    { label: "Classes", value: visibleClassCount.toString() },
-    { label: "Selected", value: selectedObjectIds.length.toString() },
-  ]
-
   return (
-    <main className="dark relative h-[100dvh] overflow-hidden bg-[#030507] text-white">
+    <div className="dark relative h-full min-h-0 overflow-hidden bg-[#030507] text-white">
       {showReadyScene ? (
         <div className="absolute inset-0 z-0">
           <HomeSceneViewer
@@ -575,7 +555,6 @@ export default function DashboardPage() {
             onObjectActivate={(objectId, options) => activateObject(objectId, options?.additive)}
             onObjectHover={setHoveredObjectId}
             debugOptions={viewerDebug}
-            onVertexCountChange={setScenePointCount}
             height="100%"
             showSceneBadge={false}
             className="h-full w-full rounded-none"
@@ -637,47 +616,6 @@ export default function DashboardPage() {
 
       {showSideRail ? (
         <>
-          <div className="pointer-events-none absolute left-3 top-20 z-30 w-[220px] sm:left-5 sm:top-24 sm:w-[244px]">
-            <div className="pointer-events-auto rounded-[28px] border border-white/10 bg-black/44 px-4 py-4 text-white/90 backdrop-blur-2xl">
-              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/48">Scene metrics</p>
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                {metrics.map((metric) => (
-                  <div key={metric.label} className="rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/42">{metric.label}</p>
-                    <p className="mt-2 text-lg font-semibold text-white">{metric.value}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-4 flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => toggleViewerDebug("showApproxRegion")}
-                  className={cn(
-                    "rounded-full border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors",
-                    viewerDebug.showApproxRegion
-                      ? "border-emerald-400/40 bg-emerald-400/12 text-emerald-200"
-                      : "border-white/10 bg-white/5 text-white/66"
-                  )}
-                >
-                  Approx
-                </button>
-                <button
-                  type="button"
-                  onClick={() => toggleViewerDebug("showBBoxes")}
-                  className={cn(
-                    "rounded-full border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors",
-                    viewerDebug.showBBoxes
-                      ? "border-emerald-400/40 bg-emerald-400/12 text-emerald-200"
-                      : "border-white/10 bg-white/5 text-white/66"
-                  )}
-                >
-                  BBox
-                </button>
-              </div>
-            </div>
-          </div>
-
           <div className="pointer-events-none absolute inset-x-0 bottom-20 z-40 p-3 sm:inset-y-0 sm:right-0 sm:left-auto sm:w-[452px] sm:p-5">
             <aside className="pointer-events-auto mx-auto flex max-h-[min(68dvh,760px)] w-full max-w-[420px] flex-col gap-3 overflow-y-auto pr-1 sm:h-full sm:max-h-[calc(100dvh-2.5rem)]">
               <div className="rounded-[28px] border border-white/10 bg-black/48 p-4 backdrop-blur-2xl">
@@ -822,7 +760,7 @@ export default function DashboardPage() {
           className={cn(
             "pointer-events-none absolute bottom-4 z-30 flex justify-center px-3 sm:bottom-5",
             showSideRail
-              ? "left-0 right-0 sm:left-[calc(1.25rem+244px+0.75rem)] sm:right-[calc(452px+1.25rem)]"
+              ? "left-0 right-0 sm:right-[calc(452px+1.25rem)]"
               : "left-1/2 w-[min(980px,calc(100%-1.5rem))] -translate-x-1/2 sm:w-[min(980px,calc(100%-3rem))]"
           )}
         >
@@ -909,6 +847,6 @@ export default function DashboardPage() {
           />
         </div>
       ) : null}
-    </main>
+    </div>
   )
 }
