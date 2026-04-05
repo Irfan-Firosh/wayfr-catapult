@@ -15,7 +15,11 @@ const APP_ID = process.env.NEXT_PUBLIC_WORLD_APP_ID as `app_${string}`
 const RP_ID = process.env.NEXT_PUBLIC_WORLD_RP_ID ?? ""
 const ACTION = "verify-human"
 
-export function WorldIDVerifyButton() {
+interface WorldIDVerifyButtonProps {
+  onVerified?: () => void
+}
+
+export function WorldIDVerifyButton({ onVerified }: WorldIDVerifyButtonProps = {}) {
   const [open, setOpen] = useState(false)
   const [verified, setVerified] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -72,7 +76,8 @@ export function WorldIDVerifyButton() {
   const handleSuccess = useCallback(() => {
     setVerified(true)
     setOpen(false)
-  }, [])
+    onVerified?.()
+  }, [onVerified])
 
   const handleError = useCallback((code: IDKitErrorCodes) => {
     setError(`Verification error: ${code}`)

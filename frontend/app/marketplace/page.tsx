@@ -1,12 +1,13 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { PackageOpen } from "lucide-react"
+import { PackageOpen, ShieldCheck, Fingerprint, Lock } from "lucide-react"
 import { RoleSelector } from "@/components/marketplace/role-selector"
 import { ContractCard, type Contract } from "@/components/marketplace/contract-card"
 import { CreateContractDialog } from "@/components/marketplace/create-contract-dialog"
 import { ContractDetail } from "@/components/marketplace/contract-detail"
 import { BalanceCard } from "@/components/marketplace/balance-card"
+import { WorldIDVerifyButton } from "@/components/world-id/WorldIDVerifyButton"
 
 interface Profile {
   id: string
@@ -17,6 +18,7 @@ interface Profile {
 }
 
 export default function MarketplacePage() {
+  const [humanVerified, setHumanVerified] = useState(false)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [profileLoading, setProfileLoading] = useState(true)
   const [roleLoading, setRoleLoading] = useState(false)
@@ -101,6 +103,54 @@ export default function MarketplacePage() {
   function refreshAll() {
     fetchContracts()
     fetchMyContracts()
+  }
+
+  if (!humanVerified) {
+    return (
+      <main className="flex min-h-full items-center justify-center bg-background px-6 py-16">
+        <div className="w-full max-w-lg">
+          <div className="mb-8 text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-mango/10">
+              <ShieldCheck className="h-7 w-7 text-mango" />
+            </div>
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              Verify your humanity
+            </h1>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              The wayfr marketplace requires proof of personhood before you can
+              participate. This protects every transaction from bots and fraud.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm">
+            <div className="mb-5 rounded-xl border border-white/5 bg-white/[0.02] px-4 py-3">
+              <p className="text-xs leading-5 text-muted-foreground">
+                Scan the QR code with the{" "}
+                <span className="font-medium text-foreground">World App</span>{" "}
+                to prove you&apos;re a real human. Your identity stays private
+                — only a zero-knowledge proof is shared.
+              </p>
+            </div>
+            <WorldIDVerifyButton onVerified={() => setHumanVerified(true)} />
+          </div>
+
+          <div className="mt-8 grid grid-cols-3 gap-4">
+            <FeatureChip
+              icon={<Fingerprint className="h-4 w-4" />}
+              label="Unique human"
+            />
+            <FeatureChip
+              icon={<Lock className="h-4 w-4" />}
+              label="Zero knowledge"
+            />
+            <FeatureChip
+              icon={<ShieldCheck className="h-4 w-4" />}
+              label="On-chain trust"
+            />
+          </div>
+        </div>
+      </main>
+    )
   }
 
   if (profileLoading) {
@@ -221,5 +271,14 @@ export default function MarketplacePage() {
         )}
       </div>
     </main>
+  )
+}
+
+function FeatureChip({ icon, label }: { icon: React.ReactNode; label: string }) {
+  return (
+    <div className="flex flex-col items-center gap-1.5 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-3">
+      <span className="text-mango">{icon}</span>
+      <span className="text-[10px] font-medium text-muted-foreground">{label}</span>
+    </div>
   )
 }

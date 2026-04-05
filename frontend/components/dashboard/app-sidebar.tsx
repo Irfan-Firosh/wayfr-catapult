@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTheme } from "next-themes"
 import { SignInButton, UserButton, useAuth } from "@clerk/nextjs"
-import { Bot, LayoutDashboard, Moon, ScanSearch, ShieldCheck, Store, Sun } from "lucide-react"
+import { Bot, LayoutDashboard, Moon, ScanSearch, Store, Sun } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -27,7 +27,6 @@ const navigation = [
   { href: "/personas", label: "Personas", icon: Bot },
   { href: "/marketplace", label: "Marketplace", icon: Store },
   { href: "/setup", label: "Setup", icon: ScanSearch },
-  { href: "/verify", label: "Verify", icon: ShieldCheck },
 ]
 
 export function AppSidebar() {
