@@ -18,6 +18,7 @@ const navLinks = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/personas", label: "Persona" },
   { href: "/marketplace", label: "Marketplace", desktopClassName: "ml-4" },
+  { href: "/verify", label: "Verify" },
 ]
 
 export function Navbar() {
