@@ -53,21 +53,41 @@ export function ObjectPointHighlight({
   }
 
   return (
-    <points renderOrder={20}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-      </bufferGeometry>
-      <pointsMaterial
-        color={color}
-        size={pointSize}
-        sizeAttenuation
-        map={circleTexture ?? undefined}
-        alphaTest={0.35}
-        transparent
-        opacity={opacity}
-        depthWrite={false}
-        blending={THREE.AdditiveBlending}
-      />
-    </points>
+    <group renderOrder={20}>
+      <points>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+        </bufferGeometry>
+        <pointsMaterial
+          color={color}
+          size={pointSize * 1.95}
+          sizeAttenuation
+          map={circleTexture ?? undefined}
+          alphaTest={0.18}
+          transparent
+          opacity={opacity * 0.22}
+          depthWrite={false}
+          depthTest={false}
+          blending={THREE.AdditiveBlending}
+        />
+      </points>
+
+      <points>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+        </bufferGeometry>
+        <pointsMaterial
+          color={color}
+          size={pointSize}
+          sizeAttenuation
+          map={circleTexture ?? undefined}
+          alphaTest={0.35}
+          transparent
+          opacity={opacity}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
+      </points>
+    </group>
   )
 }

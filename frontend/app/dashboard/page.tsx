@@ -541,6 +541,7 @@ export default function DashboardPage() {
             sceneVersion={sceneVersion}
             objects={visibleObjects}
             mode="annotator"
+            exactSelectionHighlight
             focusedObjectId={focusedObjectId}
             selectedObjectIds={selectedObjectIds}
             hoveredObjectId={hoveredObjectId}
@@ -610,9 +611,9 @@ export default function DashboardPage() {
 
       {showSideRail ? (
         <>
-          <div className="pointer-events-none absolute inset-x-0 bottom-20 z-40 p-3 sm:inset-y-0 sm:right-0 sm:left-auto sm:w-[452px] sm:p-5">
-            <aside className="pointer-events-auto mx-auto flex max-h-[min(68dvh,760px)] w-full max-w-[420px] flex-col gap-3 overflow-y-auto pb-4 pr-1 sm:h-full sm:max-h-[calc(100dvh-2.5rem)]">
-              <div className="rounded-[28px] border border-white/10 bg-black/48 p-4 backdrop-blur-2xl">
+          <div className="pointer-events-none absolute inset-x-0 bottom-20 z-40 flex min-h-0 flex-col p-3 sm:inset-y-0 sm:right-0 sm:left-auto sm:h-full sm:w-[452px] sm:p-5">
+            <aside className="pointer-events-auto mx-auto flex h-[min(68dvh,760px)] w-full max-w-[420px] min-h-0 flex-col gap-3 sm:h-full sm:min-h-0 sm:flex-1">
+              <div className="shrink-0 rounded-[28px] border border-white/10 bg-black/48 p-4 backdrop-blur-2xl">
                 <div className="flex items-start justify-between gap-3">
                   <button
                     type="button"
@@ -711,38 +712,40 @@ export default function DashboardPage() {
               </div>
 
               {activeHome?.status === "ready" ? (
-                <>
-                  <SceneObjectInspector
-                    focusedObject={focusedObject}
-                    selectedObjects={selectedObjects}
-                    pinnedObjectIds={pinnedObjectIds}
-                    displayMode={displayMode}
-                    onClearSelection={clearSelection}
-                    onToggleIsolate={toggleIsolate}
-                    onTogglePin={togglePin}
-                    onHideObject={hideObject}
-                    onHideLabel={toggleLabelVisibility}
-                  />
+                <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain pr-1 pb-1 [scrollbar-gutter:stable]">
+                  <div className="flex flex-col gap-3 pb-3">
+                    <SceneObjectInspector
+                      focusedObject={focusedObject}
+                      selectedObjects={selectedObjects}
+                      pinnedObjectIds={pinnedObjectIds}
+                      displayMode={displayMode}
+                      onClearSelection={clearSelection}
+                      onToggleIsolate={toggleIsolate}
+                      onTogglePin={togglePin}
+                      onHideObject={hideObject}
+                      onHideLabel={toggleLabelVisibility}
+                    />
 
-                  <SceneObjectBrowser
-                    objects={visibleObjects}
-                    query={objectQuery}
-                    selectedObjectIds={selectedObjectIds}
-                    focusedObjectId={focusedObjectId}
-                    pinnedObjectIds={pinnedObjectIds}
-                    hiddenLabels={hiddenLabels}
-                    hiddenObjectIds={hiddenObjectIds}
-                    onQueryChange={setObjectQuery}
-                    onSelectObject={activateObject}
-                    onSelectLabel={selectLabelGroup}
-                    onHoverObject={setHoveredObjectId}
-                    onTogglePin={togglePin}
-                    onHideObject={hideObject}
-                    onToggleLabelVisibility={toggleLabelVisibility}
-                    onResetVisibility={resetVisibility}
-                    listClassName="max-h-[280px] sm:max-h-[340px]"
-                  />
-                </>
+                    <SceneObjectBrowser
+                      objects={visibleObjects}
+                      query={objectQuery}
+                      selectedObjectIds={selectedObjectIds}
+                      focusedObjectId={focusedObjectId}
+                      pinnedObjectIds={pinnedObjectIds}
+                      hiddenLabels={hiddenLabels}
+                      hiddenObjectIds={hiddenObjectIds}
+                      onQueryChange={setObjectQuery}
+                      onSelectObject={activateObject}
+                      onSelectLabel={selectLabelGroup}
+                      onHoverObject={setHoveredObjectId}
+                      onTogglePin={togglePin}
+                      onHideObject={hideObject}
+                      onToggleLabelVisibility={toggleLabelVisibility}
+                      onResetVisibility={resetVisibility}
+                      listClassName="max-h-[min(280px,40dvh)] sm:max-h-[min(340px,45dvh)]"
+                    />
+                  </div>
+                </div>
               ) : null}
             </aside>
           </div>
