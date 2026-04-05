@@ -1,0 +1,22 @@
+{
+  "job_id": "4f9c9ea2348e",
+  "status": "completed",
+  "progress": 100,
+  "stage": "completed",
+  "message": "Processing complete.",
+  "requested_provider": "gsam2",
+  "actual_provider": "modal",
+  "input_video_rel": "uploads/4f9c9ea2348e_original.mp4",
+  "output_video_rel": "outputs/4f9c9ea2348e_tracked.mp4",
+  "detections_json_rel": "outputs/4f9c9ea2348e_detections.json",
+  "metadata": {
+    "num_frames": 388,
+    "objects_detected": [
+      "",
+      "object"
+    ]
+  },
+  "error": null,
+  "created_at": "2026-04-02T03:11:05.976063+00:00",
+  "updated_at": "2026-04-02T03:17:36.692307+00:00"
+}

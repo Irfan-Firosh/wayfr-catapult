@@ -1,0 +1,187 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  /* Mango palette exposed as Tailwind colors */
+  --color-mango-50: var(--mango-50);
+  --color-mango-100: var(--mango-100);
+  --color-mango-300: var(--mango-300);
+  --color-mango-500: var(--mango-500);
+  --color-mango-700: var(--mango-700);
+  --color-mango-900: var(--mango-900);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+
+  /* Animations (Magic UI) */
+  --animate-shimmer-slide: shimmer-slide var(--speed) ease-in-out infinite alternate;
+  --animate-spin-around: spin-around calc(var(--speed) * 2) infinite linear;
+  @keyframes shimmer-slide {
+    to { transform: translate(calc(100cqw - 100%), 0); }
+  }
+  @keyframes spin-around {
+    0%          { transform: translateZ(0) rotate(0); }
+    15%, 35%    { transform: translateZ(0) rotate(90deg); }
+    65%, 85%    { transform: translateZ(0) rotate(270deg); }
+    100%        { transform: translateZ(0) rotate(360deg); }
+  }
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(calc(-100% - var(--gap))); }
+  }
+  @keyframes marquee-vertical {
+    from { transform: translateY(0); }
+    to   { transform: translateY(calc(-100% - var(--gap))); }
+  }
+  --animate-pulse: pulse var(--duration) ease-out infinite;
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 var(--pulse-color); }
+    50%       { box-shadow: 0 0 0 8px var(--pulse-color); }
+  }
+  --animate-meteor: meteor 5s linear infinite;
+  @keyframes meteor {
+    0%   { transform: rotate(var(--angle)) translateX(0); opacity: 1; }
+    70%  { opacity: 1; }
+    100% { transform: rotate(var(--angle)) translateX(-500px); opacity: 0; }
+  }
+  --animate-border-beam: border-beam calc(var(--duration)*1s) infinite linear;
+  @keyframes border-beam {
+    100% { offset-distance: 100%; }
+  }
+}
+
+/* ─── MANGO PALETTE ─────────────────────────────────────── */
+:root {
+  --mango-50:  oklch(0.977 0.026 91);
+  --mango-100: oklch(0.910 0.090 86);
+  --mango-300: oklch(0.822 0.140 79);
+  --mango-500: oklch(0.735 0.152 71);   /* #F5A623 — core mango */
+  --mango-700: oklch(0.590 0.138 62);   /* #C47A1E — deep mango */
+  --mango-900: oklch(0.400 0.098 56);   /* dark mango */
+}
+
+/* ─── LIGHT MODE ─────────────────────────────────────────── */
+:root {
+  --background:            oklch(0.997 0.006 91);   /* #FFFDF9 warm white */
+  --foreground:            oklch(0.135 0.015 60);   /* #1A1208 near-black warm */
+  --card:                  oklch(0.977 0.026 91);   /* mango-50 card surface */
+  --card-foreground:       oklch(0.135 0.015 60);
+  --popover:               oklch(0.990 0.012 91);
+  --popover-foreground:    oklch(0.135 0.015 60);
+  --primary:               oklch(0.590 0.138 62);   /* mango-700 — primary on light */
+  --primary-foreground:    oklch(0.997 0.006 91);
+  --secondary:             oklch(0.910 0.090 86);   /* mango-100 */
+  --secondary-foreground:  oklch(0.400 0.098 56);
+  --muted:                 oklch(0.955 0.040 88);
+  --muted-foreground:      oklch(0.490 0.060 65);
+  --accent:                oklch(0.910 0.090 86);   /* mango-100 */
+  --accent-foreground:     oklch(0.400 0.098 56);
+  --destructive:           oklch(0.577 0.245 27);
+  --border:                oklch(0.870 0.075 82);
+  --input:                 oklch(0.870 0.075 82);
+  --ring:                  oklch(0.735 0.152 71);   /* mango-500 focus ring */
+  --radius:                0.625rem;
+
+  --sidebar:               oklch(0.990 0.012 91);
+  --sidebar-foreground:    oklch(0.135 0.015 60);
+  --sidebar-primary:       oklch(0.590 0.138 62);
+  --sidebar-primary-foreground: oklch(0.997 0.006 91);
+  --sidebar-accent:        oklch(0.910 0.090 86);
+  --sidebar-accent-foreground: oklch(0.400 0.098 56);
+  --sidebar-border:        oklch(0.870 0.075 82);
+  --sidebar-ring:          oklch(0.735 0.152 71);
+}
+
+/* ─── DARK MODE ──────────────────────────────────────────── */
+.dark {
+  --background:            oklch(0.098 0.008 60);   /* #0C0A08 warm near-black */
+  --foreground:            oklch(0.962 0.010 80);   /* #F5F0E8 warm white */
+  --card:                  oklch(0.130 0.008 60);   /* #141210 dark surface */
+  --card-foreground:       oklch(0.962 0.010 80);
+  --popover:               oklch(0.165 0.008 60);   /* #1C1916 raised */
+  --popover-foreground:    oklch(0.962 0.010 80);
+  --primary:               oklch(0.735 0.152 71);   /* mango-500 — primary on dark */
+  --primary-foreground:    oklch(0.098 0.008 60);
+  --secondary:             oklch(0.165 0.008 60);
+  --secondary-foreground:  oklch(0.822 0.140 79);
+  --muted:                 oklch(0.165 0.008 60);
+  --muted-foreground:      oklch(0.560 0.040 70);
+  --accent:                oklch(0.200 0.020 65);
+  --accent-foreground:     oklch(0.822 0.140 79);
+  --destructive:           oklch(0.704 0.191 22);
+  --border:                oklch(0.735 0.152 71 / 15%);
+  --input:                 oklch(1 0 0 / 12%);
+  --ring:                  oklch(0.735 0.152 71);   /* mango-500 focus ring */
+
+  --sidebar:               oklch(0.130 0.008 60);
+  --sidebar-foreground:    oklch(0.962 0.010 80);
+  --sidebar-primary:       oklch(0.735 0.152 71);
+  --sidebar-primary-foreground: oklch(0.098 0.008 60);
+  --sidebar-accent:        oklch(0.165 0.008 60);
+  --sidebar-accent-foreground: oklch(0.822 0.140 79);
+  --sidebar-border:        oklch(0.735 0.152 71 / 15%);
+  --sidebar-ring:          oklch(0.735 0.152 71);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* ─── UTILITY CLASSES ────────────────────────────────────── */
+@layer utilities {
+  .text-mango        { color: var(--mango-500); }
+  .text-mango-deep   { color: var(--mango-700); }
+  .text-mango-soft   { color: var(--mango-300); }
+  .bg-mango          { background-color: var(--mango-500); }
+  .bg-mango-subtle   { background-color: oklch(0.735 0.152 71 / 12%); }
+  .border-mango      { border-color: oklch(0.735 0.152 71 / 30%); }
+  .ring-mango        { --tw-ring-color: var(--mango-500); }
+  .glow-mango        { box-shadow: 0 0 40px oklch(0.735 0.152 71 / 20%); }
+}

@@ -1,0 +1,36 @@
+{
+  "job_id": "760f36e35f16",
+  "status": "completed",
+  "progress": 100,
+  "stage": "completed",
+  "message": "Processing complete.",
+  "requested_provider": "gsam2",
+  "actual_provider": "local_yolo",
+  "input_video_rel": "uploads/760f36e35f16_original.mp4",
+  "output_video_rel": "outputs/760f36e35f16_tracked.mp4",
+  "detections_json_rel": "outputs/760f36e35f16_detections.json",
+  "metadata": {
+    "num_frames": 388,
+    "objects_detected": [
+      "bed",
+      "bench",
+      "book",
+      "bottle",
+      "bowl",
+      "chair",
+      "cup",
+      "dining table",
+      "handbag",
+      "keyboard",
+      "laptop",
+      "mouse",
+      "oven",
+      "person",
+      "refrigerator",
+      "tv"
+    ]
+  },
+  "error": null,
+  "created_at": "2026-04-02T02:06:17.849407+00:00",
+  "updated_at": "2026-04-02T02:08:06.420010+00:00"
+}

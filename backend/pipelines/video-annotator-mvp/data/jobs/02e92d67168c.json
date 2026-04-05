@@ -1,0 +1,33 @@
+{
+  "job_id": "02e92d67168c",
+  "status": "completed",
+  "progress": 100,
+  "stage": "completed",
+  "message": "Processing complete.",
+  "requested_provider": "gsam2",
+  "actual_provider": "modal",
+  "input_video_rel": "uploads/02e92d67168c_original.mp4",
+  "output_video_rel": "outputs/02e92d67168c_tracked.mp4",
+  "detections_json_rel": "outputs/02e92d67168c_detections.json",
+  "metadata": {
+    "num_frames": 388,
+    "objects_detected": [
+      "bag",
+      "bed",
+      "bottle",
+      "box",
+      "chair",
+      "desk",
+      "door",
+      "laptop",
+      "monitor",
+      "pillow",
+      "shelf",
+      "table",
+      "window"
+    ]
+  },
+  "error": null,
+  "created_at": "2026-04-02T05:48:11.603277+00:00",
+  "updated_at": "2026-04-02T06:04:16.584566+00:00"
+}

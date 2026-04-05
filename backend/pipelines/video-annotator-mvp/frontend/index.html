@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Annotator MVP</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Video Annotator MVP</h1>
+      <p class="sub">Upload a video, run annotation, and preview tracked output.</p>
+
+      <section class="controls">
+        <input id="videoInput" type="file" accept="video/*" />
+        <input id="textPrompt" type="text" placeholder="Filter objects (empty = detect all, or e.g. person. chair.)" />
+        <label class="checkbox-label">
+          <input id="skipOutputVideo" type="checkbox" />
+          Skip annotated demo video (JSON only, faster)
+        </label>
+        <button id="uploadBtn">Upload</button>
+        <button id="processBtn" disabled>Process</button>
+      </section>
+
+      <section class="status">
+        <div><strong>Job:</strong> <span id="jobId">-</span></div>
+        <div><strong>Status:</strong> <span id="jobStatus">idle</span></div>
+        <div><strong>Stage:</strong> <span id="jobStage">-</span></div>
+        <div><strong>Progress:</strong> <span id="jobProgress">0%</span></div>
+        <div><strong>Message:</strong> <span id="jobMessage">Waiting for upload.</span></div>
+      </section>
+
+      <section class="videos">
+        <div>
+          <h3>Original</h3>
+          <video id="originalVideo" controls></video>
+        </div>
+        <div>
+          <h3>Annotated</h3>
+          <video id="annotatedVideo" controls></video>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+  </html>
+

@@ -1,0 +1,18 @@
+{
+  "job_id": "cc11e585b6b2",
+  "status": "completed",
+  "progress": 100,
+  "stage": "completed",
+  "message": "Reconstruction complete.",
+  "input_video_rel": "uploads/cc11e585b6b2_original.mp4",
+  "glb_rel": "outputs/cc11e585b6b2.glb",
+  "viewer_ready": true,
+  "metadata": {
+    "num_frames": 26,
+    "num_points": 2812000,
+    "glb_size_mb": 42.9
+  },
+  "error": null,
+  "created_at": "2026-04-02T03:48:49.138974+00:00",
+  "updated_at": "2026-04-02T03:49:48.330530+00:00"
+}

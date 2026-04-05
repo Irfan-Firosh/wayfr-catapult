@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Scene Reconstructor</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>3D Scene Reconstructor</h1>
+      <p class="sub">Upload a video, reconstruct a 3D point cloud with MapAnything, and explore it interactively.</p>
+
+      <section class="controls">
+        <input id="videoInput" type="file" accept="video/*" />
+        <div class="param-group">
+          <label for="fpsInput">FPS</label>
+          <input id="fpsInput" type="number" value="2" min="1" max="30" />
+        </div>
+        <div class="param-group">
+          <label for="confInput">Conf%</label>
+          <input id="confInput" type="number" value="25" min="0" max="100" />
+        </div>
+        <button id="uploadBtn">Upload</button>
+        <button id="processBtn" disabled>Reconstruct</button>
+        <button id="downloadBtn">Download GLB</button>
+      </section>
+
+      <section class="status">
+        <div><strong>Job:</strong> <span id="jobId">-</span></div>
+        <div><strong>Status:</strong> <span id="jobStatus">idle</span></div>
+        <div><strong>Stage:</strong> <span id="jobStage">-</span></div>
+        <div><strong>Message:</strong> <span id="jobMessage">Waiting for upload.</span></div>
+      </section>
+
+      <div class="progress-bar-container" id="progressContainer">
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <section class="viewer-section" id="viewerSection">
+        <h3>3D Reconstruction</h3>
+        <div class="viewer-frame">
+          <iframe id="viewerIframe" src="about:blank"></iframe>
+        </div>
+      </section>
+
+      <div class="metadata" id="metadata">
+        Frames: <span id="metaFrames">-</span> &nbsp;|&nbsp;
+        Points: <span id="metaPoints">-</span> &nbsp;|&nbsp;
+        GLB Size: <span id="metaSize">-</span>
+      </div>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,84 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: #eee;
+}
+
+.container {
+  max-width: 960px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+h1 {
+  margin: 0 0 8px;
+}
+
+.sub {
+  margin: 0 0 20px;
+  color: #bbb;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto auto;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.checkbox-label {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.checkbox-label input {
+  width: auto;
+  margin: 0;
+}
+
+input,
+button {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #1d1d1d;
+  color: #eee;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.status {
+  background: #1a1a1a;
+  border: 1px solid #2f2f2f;
+  border-radius: 10px;
+  padding: 12px;
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+.videos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+video {
+  width: 100%;
+  min-height: 260px;
+  background: #000;
+  border: 1px solid #2f2f2f;
+  border-radius: 10px;
+}
+

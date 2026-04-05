@@ -1,0 +1,16 @@
+{
+  "job_id": "08772c9e4f11",
+  "status": "processing",
+  "progress": 15,
+  "stage": "modal",
+  "message": "Uploading video bytes to Modal",
+  "requested_provider": "gsam2",
+  "actual_provider": null,
+  "input_video_rel": "uploads/08772c9e4f11_original.mp4",
+  "output_video_rel": null,
+  "detections_json_rel": null,
+  "metadata": {},
+  "error": null,
+  "created_at": "2026-04-02T04:18:01.051745+00:00",
+  "updated_at": "2026-04-02T04:18:01.863117+00:00"
+}

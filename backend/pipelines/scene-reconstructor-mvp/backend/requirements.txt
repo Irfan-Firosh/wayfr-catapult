@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+modal
+numpy
+trimesh
+viser==0.2.23
+jinja2
+pydantic
+python-multipart

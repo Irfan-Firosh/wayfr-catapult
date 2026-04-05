@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scene Bridge</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Scene Bridge</h1>
+      <p class="sub">Connect 2D object detections with 3D reconstruction to anchor objects in 3D space.</p>
+
+      <section class="discovery" id="discovery">
+        <div class="discovery-card" id="reconCard">
+          <h3>3D Reconstruction</h3>
+          <div id="reconInfo" class="no-jobs">Scanning...</div>
+        </div>
+        <div class="discovery-card" id="annotatorCard">
+          <h3>2D Detections</h3>
+          <div id="annotatorInfo" class="no-jobs">Scanning...</div>
+        </div>
+      </section>
+
+      <section class="controls">
+        <button id="bridgeBtn" disabled>Bridge</button>
+        <button id="refreshBtn">Refresh</button>
+      </section>
+
+      <section class="status" id="statusSection" style="display: none;">
+        <div><strong>Bridge:</strong> <span id="bridgeId">-</span></div>
+        <div><strong>Status:</strong> <span id="bridgeStatus">-</span></div>
+        <div><strong>Message:</strong> <span id="bridgeMessage">-</span></div>
+      </section>
+
+      <div class="progress-bar-container" id="progressContainer">
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <section class="main-view">
+        <div class="object-panel" id="objectPanel">
+          <h3>Objects <span id="objectCount"></span></h3>
+          <div class="object-list" id="objectList"></div>
+        </div>
+        <div class="viewer-section" id="viewerSection">
+          <iframe id="viewerIframe" src="about:blank"></iframe>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

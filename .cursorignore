@@ -1,0 +1,40 @@
+# Virtual environments
+**/.venv/
+**/venv/
+
+**/__pycache__/
+*.pyc
+
+# Node / JS toolchains (mira-chat, etc.)
+**/node_modules/
+**/.next/
+**/out/
+
+# Build output
+**/dist/
+**/build/
+**/.turbo/
+
+# Test / coverage
+**/coverage/
+
+# Large local artifacts & runtime data (MVPs)
+**/data/outputs/
+**/data/uploads/
+**/data/jobs/
+
+# Model / media blobs (indexing these rarely helps coding)
+*.pt
+*.pth
+*.onnx
+*.glb
+*.mp4
+
+# Tooling logs
+.playwright-mcp/
+
+# Whole trees you keep out of AI context
+/frontend-complete/
+/assets/
+/android/
+/mira-chat/

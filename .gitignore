@@ -1,0 +1,42 @@
+# Python
+**/.venv/
+.venv/
+venv/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Secrets & local env
+.env
+**/.env
+.env.*
+!.env.example
+
+# Node
+**/node_modules/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+
+CLAUDE.md
+
+# --- Runtime / generated data (do not commit; GitHub hard-limits 100MB files) ---
+# Per-app job queues + artifacts (paths like backend/pipelines/scene-reconstructor-mvp/data/outputs/)
+jobs/
+outputs/
+uploads/
+**/data/jobs/
+**/data/outputs/
+**/data/uploads/
+**/data/bridges/
+/assets/
+
+# Downloaded model weights (e.g. YOLO)
+*.pt
+*.pth
